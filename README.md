@@ -28,7 +28,8 @@ Test the installation by issuing `producer` at the command line to see some
 
 ### Package Install
 
-To install the Producer package as a development requirement for your package issue `composer require --dev producer/producer`.
+To install the Producer package as a development requirement for your package
+issue `composer require --dev producer/producer`.
 
 Test the installation by issuing `./vendor/bin/producer` at the command line to
 see some "help" output.
@@ -82,7 +83,7 @@ phpdoc = /path/to/phpdoc
 
 ; names for support files
 [files]
-changes = CHANGES.md
+changelog = CHANGELOG.md
 contributing = CONTRIBUTING.md
 license = LICENSE.md
 phpunit = phpunit.xml.dist
@@ -146,7 +147,8 @@ before a beta release.
 
 ## Releasing
 
-When you `release` the package, Producer will first `validate` it as a pre-flight step.
+When you `release` the package, Producer will first `validate` it as a
+pre-flight step.
 
 Then it will use the Github or Gitlab API to create a release. In the case of
 Bitbucket (which does not have an API for releases) it will tag the repository
