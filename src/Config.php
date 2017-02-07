@@ -35,13 +35,6 @@ class Config
             'phpdoc' => 'phpdoc',
             'phpunit' => 'phpunit',
         ],
-        'files' => [
-            'changes' => 'CHANGES.md',
-            'contributing' => 'CONTRIBUTING.md',
-            'license' => 'LICENSE.md',
-            'phpunit' => 'phpunit.xml.dist',
-            'readme' => 'README.md',
-        ],
     ];
 
     /**

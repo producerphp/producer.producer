@@ -80,14 +80,6 @@ package = Custom.Name
 [commands]
 phpunit = /path/to/phpunit
 phpdoc = /path/to/phpdoc
-
-; names for support files
-[files]
-changelog = CHANGELOG.md
-contributing = CONTRIBUTING.md
-license = LICENSE.md
-phpunit = phpunit.xml.dist
-readme = README.md
 ```
 
 ## Getting Started
@@ -127,17 +119,15 @@ In addition, the `validate` command will show any open issues from the remote
 origin, but these are presented only as a reminder, and will not be considered
 invalidators.
 
-### Informational Files
+### Support Files
 
-Producer wants you to have these informational files in the package root:
+Producer wants you to have these support files in the package root:
 
-- `CHANGES.md`, a list of changes for the release;
-- `CONTRIBUTING.md`, describing how to contribute to the library;
-- `LICENSE.md`, the package licensing text; and,
-- `README.md`, an introduction to the library.
-
-You may override these file names by setting the appropriate `.producer/config`
-directives.
+- `CHANGELOG(.*)`, a list of changes for the release;
+- `CONTRIBUTING(.*)`, describing how to contribute to the library;
+- `LICENSE(.*)`, the package licensing text; and,
+- `README(.*)`, an introduction to the library.
+- `phpunit.xml(.*)`, a PHPUnit config file.
 
 ### Docblocks
 

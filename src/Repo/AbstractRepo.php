@@ -69,6 +69,20 @@ abstract class AbstractRepo implements RepoInterface
 
     /**
      *
+     * Support file names.
+     *
+     * @var array
+     */
+    protected $files = [
+        'CHANGELOG' => null,
+        'CONTRIBUTING' => null,
+        'LICENSE' => null,
+        'README' => null,
+        'phpunit.xml' => null,
+    ];
+
+    /**
+     *
      * Constructor.
      *
      * @param Fsio $fsio A filesystem I/O object.
@@ -179,13 +193,22 @@ abstract class AbstractRepo implements RepoInterface
      */
     public function checkSupportFiles()
     {
-        foreach ($this->config->get('files') as $file) {
-            if (! $this->fsio->isFile($file)) {
+        $rootFiles = $this->fsio->glob('*', GLOB_MARK);
+        foreach (array_keys($this->files) as $supportFile) {
+            $file = false;
+            foreach ($rootFiles as $rootFile) {
+                if (preg_match("/^{$supportFile}(\.[a-z]+)?$/", $rootFile)) {
+                    $file = $rootFile;
+                    break;
+                }
+            }
+            if (! $file) {
                 throw new Exception("The file {$file} is missing.");
             }
             if (trim($this->fsio->get($file)) === '') {
                 throw new Exception("The file {$file} is empty.");
             }
+            $this->files[$supportFile] = $file;
         }
     }
 
@@ -196,7 +219,7 @@ abstract class AbstractRepo implements RepoInterface
      */
     public function checkLicenseYear()
     {
-        $license = $this->fsio->get($this->config->get('files')['license']);
+        $license = $this->fsio->get($this->files['LICENSE']);
         $year = date('Y');
         if (strpos($license, $year) === false) {
             $this->logger->warning('The LICENSE copyright year (or range of years) looks out-of-date.');
@@ -223,12 +246,12 @@ abstract class AbstractRepo implements RepoInterface
 
     /**
      *
-     * Gets the contents of the CHANGES file.
+     * Gets the contents of the CHANGELOG file.
      *
      */
-    public function getChanges()
+    public function getChangelog()
     {
-        return $this->fsio->get($this->config->get('files')['changes']);
+        return $this->fsio->get($this->files['CHANGELOG']);
     }
 
     /**
@@ -320,18 +343,18 @@ abstract class AbstractRepo implements RepoInterface
      */
      public function checkChanges()
     {
-        $lastChangelog = $this->getChangesDate();
-        $this->logger->info("Last changes date is $lastChangelog.");
+        $lastChangelog = $this->getChangelogDate();
+        $this->logger->info("Last CHANGELOG date is $lastChangelog.");
 
         $lastCommit = $this->getLastCommitDate();
         $this->logger->info("Last commit date is $lastCommit.");
 
         if ($lastChangelog == $lastCommit) {
-            $this->logger->info('Changes appear up to date.');
+            $this->logger->info('CHANGELOG appears up to date.');
             return;
         }
 
-        $this->logger->error('Changes appear out of date.');
+        $this->logger->error('CHANGELOG appears out of date.');
         $this->logger->error('Log of possible missing changes:');
         $this->logSinceDate($lastChangelog);
         throw new Exception('Please update and commit the changes.');

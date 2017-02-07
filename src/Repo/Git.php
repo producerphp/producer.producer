@@ -86,19 +86,15 @@ class Git extends AbstractRepo
 
     /**
      *
-     * Gets the last-committed date of the CHANGES file.
+     * Gets the last-committed date of the CHANGELOG file.
      *
      * @return string
      *
      */
-    public function getChangesDate()
+    public function getChangelogDate()
     {
-        $changes = $this->config->get('files')['changes'];
-        if (! $this->fsio->isFile($changes)) {
-            throw new Exception("File '{$changes}' is missing.");
-        }
-
-        $this->shell("git log -1 {$changes}", $output, $return);
+        $changelog = $this->files['CHANGELOG'];
+        $this->shell("git log -1 {$changelog}", $output, $return);
         return $this->findDate($output);
     }
 

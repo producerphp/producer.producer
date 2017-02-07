@@ -127,7 +127,7 @@ class Gitlab extends AbstractApi
             'id' => $this->repoName,
             'tag_name' => $version,
             'ref' => $repo->getBranch(),
-            'release_description' => $repo->getChanges()
+            'release_description' => $repo->getChangelog()
         ];
 
         $repoName = urlencode($this->repoName);

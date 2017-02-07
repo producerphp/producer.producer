@@ -107,7 +107,7 @@ class Github extends AbstractApi
             'tag_name' => $version,
             'target_commitish' => $repo->getBranch(),
             'name' => $version,
-            'body' => $repo->getChanges(),
+            'body' => $repo->getChangelog(),
             'draft' => false,
             'prerelease' => $prerelease,
         ];

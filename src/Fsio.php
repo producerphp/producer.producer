@@ -142,6 +142,21 @@ class Fsio
 
     /**
      *
+     * Returns a glob.
+     *
+     */
+    public function glob($pattern, $flags = 0)
+    {
+        $pattern = $this->path($pattern);
+        $glob = glob($pattern, $flags);
+        foreach ($glob as $key => $val) {
+            $glob[$key] = substr($val, strlen($this->root));
+        }
+        return $glob;
+    }
+
+    /**
+     *
      * Checks to see if one of the arguments is a readable file within the root.
      *
      * @param string $file The file to check.
