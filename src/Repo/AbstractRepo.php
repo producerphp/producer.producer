@@ -235,7 +235,10 @@ abstract class AbstractRepo implements RepoInterface
     {
         $this->shell('composer update');
 
-        $command = $this->config->get('commands')['phpunit'];
+        $command = 'phpunit';
+        if ($this->fsio->isFile('vendor/bin/phpunit')) {
+            $command = './vendor/bin/phpunit';
+        }
 
         $last = $this->shell($command, $output, $return);
         if ($return) {
@@ -290,8 +293,11 @@ abstract class AbstractRepo implements RepoInterface
         $this->shell("rm -rf {$target}");
 
         // validate
-        $phpdoc = $this->config->get('commands')['phpdoc'];
-        $command = "{$phpdoc} -d src/ -t {$target} --force --verbose --template=xml";
+        $command = 'phpdoc';
+        if ($this->fsio->isFile('vendor/bin/phpdoc')) {
+            $command = './vendor/bin/phpdoc';
+        }
+        $command .= " -d src/ -t {$target} --force --verbose --template=xml";
         $line = $this->shell($command, $output, $return);
 
         // get the XML file
@@ -299,10 +305,6 @@ abstract class AbstractRepo implements RepoInterface
 
         // what is the expected @package name?
         $expectPackage = $this->getPackage();
-        $customPackage = $this->config->get('package');
-        if ($customPackage) {
-            $expectPackage = $customPackage;
-        }
 
         // are there missing or misvalued @package tags?
         $missing = false;

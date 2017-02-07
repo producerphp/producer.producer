@@ -23,9 +23,6 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
     {
         $homefs = $this->mockFsio([
             'gitlab_token' => 'foobarbazdibzimgir',
-            'commands' => [
-                'phpunit' => '/path/to/phpunit',
-            ]
         ]);
         $repofs = $this->mockFsio([], false);
 
@@ -37,18 +34,6 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
             'github_token' => null,
             'github_username' => null,
             'gitlab_token' => 'foobarbazdibzimgir',
-            'package' => '',
-            'commands' => [
-                'phpdoc' => 'phpdoc',
-                'phpunit' => '/path/to/phpunit',
-            ],
-            'files' => [
-                'changes' => 'CHANGES.md',
-                'contributing' => 'CONTRIBUTING.md',
-                'license' => 'LICENSE.md',
-                'phpunit' => 'phpunit.xml.dist',
-                'readme' => 'README.md',
-            ],
         ];
 
         $actual = $config->getAll();
@@ -58,16 +43,8 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
 
     public function testLoadHomeAndRepoConfig()
     {
-        $homefs = $this->mockFsio(['gitlab_token' => 'foobarbazdibzimgir']);
-        $repofs = $this->mockFsio([
-            'package' => 'Foo.Bar',
-            'commands' => [
-                'phpunit' => './vendor/bin/phpunit'
-            ],
-            'files' => [
-                'contributing' => '.github/CONTRIBUTING'
-            ],
-        ]);
+        $homefs = $this->mockFsio(['gitlab_token' => 'foobarbaz']);
+        $repofs = $this->mockFsio(['gitlab_token' => 'dibzimgir']);
 
         $config = new Config($homefs, $repofs);
 
@@ -76,19 +53,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
             'bitbucket_username' => null,
             'github_token' => null,
             'github_username' => null,
-            'gitlab_token' => 'foobarbazdibzimgir',
-            'package' => 'Foo.Bar',
-            'commands' => [
-                'phpdoc' => 'phpdoc',
-                'phpunit' => './vendor/bin/phpunit',
-            ],
-            'files' => [
-                'changes' => 'CHANGES.md',
-                'contributing' => '.github/CONTRIBUTING',
-                'license' => 'LICENSE.md',
-                'phpunit' => 'phpunit.xml.dist',
-                'readme' => 'README.md',
-            ],
+            'gitlab_token' => 'dibzimgir',
         ];
 
         $actual = $config->getAll();

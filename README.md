@@ -67,20 +67,8 @@ all of:
 > dependencies just to authenticate to Bitbucket. The latter option might show
 > up in a subsequent release.
 
-### Package Configuration
-
 Inside your package repository, you may define a `.producer/config` file that
-sets any of the following options for that specific package.
-
-```ini
-; custom @package docblock value
-package = Custom.Name
-
-; commands to use for phpunit and phpdoc
-[commands]
-phpunit = /path/to/phpunit
-phpdoc = /path/to/phpdoc
-```
+overrides any of the home-directory options for that specific package.
 
 ## Getting Started
 
@@ -107,21 +95,21 @@ When you validate the library package, Producer will:
   local changes, then check the local status to make sure everything is
   committed and pushed)
 - Validate the composer.json file
-- Check for informational files (see below) and for a `phpunit.xml.dist` file
-- Check that the license file has the current year in it
+- Check for support files (see below)
+- Check that the LICENSE file has the current year in it
 - Call `composer update`, run the unit tests, and make sure they cleaned up after
 - Check that the PHP docblocks in the `src/` directory are valid (see below)
-- Check that the changes file is in the most-recent commit to the repository
+- Check that the CHANGELOG file is in the most-recent commit to the repository
 
-If any of those fails, then the package is not considered valid for release.
+If any of those fail, then the package is not considered valid for release.
 
 In addition, the `validate` command will show any open issues from the remote
-origin, but these are presented only as a reminder, and will not be considered
+origin. These are presented only as a reminder, and will not be considered
 invalidators.
 
 ### Support Files
 
-Producer wants you to have these support files in the package root:
+Producer requires you to have these support files in the package root:
 
 - `CHANGELOG(.*)`, a list of changes for the release;
 - `CONTRIBUTING(.*)`, describing how to contribute to the library;
