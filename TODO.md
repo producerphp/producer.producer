@@ -8,11 +8,17 @@
 
     - check for @license tag in file-level docblock
 
-- when `changes = CHANGELOG.*`, to get the change notes for the release, regex
-  to find a line with `## VERSION` on it, up til the next `## *` heading.
+- getting the change notes for the release, regex CHANGELOG to find a line with
+  `## VERSION` on it, up til the next `## *` heading.
 
 - allow an "api" config directive that says "github", "gitlab", or "bitbucket"
   so we don't depend on a particular URL
+
+- consider allowing `[vendor/package]` groups in `~/.producer/config` to have
+  specific configs for specific packages, so that credentials have no chance of
+  making it into the package.
+
+- If `phpunit.xml.*` is not present, do not try to run PHPUnit tests.
 
 ## New Commands
 
