@@ -42,6 +42,17 @@ class Validate extends AbstractCommand
 
     /**
      *
+     * Command-line option values.
+     *
+     * @var array
+     *
+     */
+    protected $options = [
+        'checkDocblocks' => true
+    ];
+
+    /**
+     *
      * The command logic.
      *
      * @param array $argv Command line arguments.
@@ -51,6 +62,7 @@ class Validate extends AbstractCommand
      */
     public function __invoke(array $argv)
     {
+        $this->setOptions($argv);
         $this->setVersion(array_shift($argv));
 
         $this->repo->sync();
@@ -62,10 +74,32 @@ class Validate extends AbstractCommand
         $this->repo->checkSupportFiles();
         $this->repo->checkLicenseYear();
         $this->repo->checkTests();
-        $this->repo->checkDocblocks($this->version);
+
+        if ($this->options['checkDocblocks']) {
+            $this->repo->checkDocblocks($this->version);
+        } else {
+            $this->logger->info("Not checking docblocks.");
+        }
+
         $this->repo->checkChanges();
         $this->checkIssues();
         $this->logger->info("{$this->package} {$this->version} appears valid for release!");
+    }
+
+    /**
+     *
+     * Extracts options from the command-line argument values.
+     *
+     * @param array &$argv The argument value.s
+     *
+     */
+    protected function setOptions(array &$argv)
+    {
+        $key = array_search('--no-docs', $argv);
+        if ($key !== false) {
+            $this->options['checkDocblocks'] = false;
+            unset($argv[$key]);
+        }
     }
 
     /**
