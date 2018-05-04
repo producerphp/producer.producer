@@ -240,10 +240,28 @@ abstract class AbstractRepo implements RepoInterface
      *
      * Gets the contents of the CHANGES file.
      *
+     * If the file is named CHANGELOG(*), then this will look for the first
+     * set of double-hashes (indicating a version heading) and only return the
+     * text until the next set of double-hashes. If there is no matching pair
+     * of double-hashes, it will return the entire text.
+     *
      */
     public function getChanges()
     {
-        return $this->fsio->get($this->config->get('files')['changes']);
+        $file = $this->config->get('files')['changes'];
+
+        $text = $this->fsio->get($file);
+        $name = substr(basename(strtoupper($file)), 0, 9);
+        if ($name !== 'CHANGELOG') {
+            return $text;
+        }
+
+        preg_match('/(\n\#\# .*\n)(.*)(\n\#\# )/Ums', $text, $matches);
+        if (isset($matches[2])) {
+            return trim($matches[2]);
+        }
+
+        return $text;
     }
 
     /**
