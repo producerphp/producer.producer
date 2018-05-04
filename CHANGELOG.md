@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2.3.0
+
+- When releasing a package with a CHANGELOG, only the most-recent block of
+  notes (indicated by the first `## version` heading) is reported to the
+  repository. (If the file is not named CHANGELOG, or if no `## version` block
+  is found, the whole text is still sent.)
+
 ## 2.2.0
 
 - Added `--no-docs` option to suppress running PHPDocumentor; this is for
