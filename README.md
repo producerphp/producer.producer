@@ -53,7 +53,7 @@ gitlab_token =
 
 ; Bitbucket
 bitbucket_username =
-bitbucket_password =" > ~/.producer/config"
+bitbucket_password =" > ~/.producer/config
 ```
 
 You can then edit `~/.producer/config` to enter your access credentials, any or
