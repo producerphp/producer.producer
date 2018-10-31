@@ -202,7 +202,7 @@ class ProducerContainer
             case (strpos($origin, 'ssh://git@') !== false):
                 return new Api\Generic(
                     $origin,
-                    $config->get('git_ssh_user'),
+                    $config->get('git_ssh_username'),
                     $config->get('git_ssh_password')
                 );
 
