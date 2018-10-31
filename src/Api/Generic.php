@@ -29,7 +29,7 @@ class Generic extends AbstractApi
      * @param string $token The API secret token.
      *
      */
-    public function __construct($origin, $user, $token)
+    public function __construct($origin)
     {
         $repoName = parse_url($origin, PHP_URL_PATH);
 

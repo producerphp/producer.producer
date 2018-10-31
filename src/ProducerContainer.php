@@ -200,11 +200,7 @@ class ProducerContainer
                 );
 
             case (strpos($origin, 'ssh://git@') !== false):
-                return new Api\Generic(
-                    $origin,
-                    $config->get('git_ssh_username'),
-                    $config->get('git_ssh_password')
-                );
+                return new Api\Generic($origin);
 
             default:
                 throw new Exception("Producer will not work with {$origin}.");
