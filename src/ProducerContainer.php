@@ -199,6 +199,13 @@ class ProducerContainer
                     $config->get('bitbucket_password')
                 );
 
+            case (strpos($origin, 'ssh://git@') !== false):
+                return new Api\Generic(
+                    $origin,
+                    $config->get('git_ssh_user'),
+                    $config->get('git_ssh_password')
+                );
+
             default:
                 throw new Exception("Producer will not work with {$origin}.");
 

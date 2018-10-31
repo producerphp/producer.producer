@@ -51,7 +51,10 @@ github_token =
 gitlab_token =
 ; Bitbucket
 bitbucket_username =
-bitbucket_password =" > ~/.producer/config
+bitbucket_password =
+; Generic Git repo via SSH
+git_ssh_username =
+git_ssh_password =" > ~/.producer/config
 ```
 
 You can then edit `~/.producer/config` to enter your access credentials, any or
