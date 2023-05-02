@@ -3,12 +3,12 @@ namespace Producer;
 
 use Producer\Api\Gitlab;
 
-class GitlabTest extends \PHPUnit_Framework_TestCase
+class GitlabTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider remoteProvider
      */
-    public function testRepoNameCanBeDerivedFromRemote($remote, $hostname, $repoName)
+    public function testRepoNameCanBeDerivedFromRemote($remote, $hostname, $repoName) : void
     {
         $api = new Gitlab(
             $remote,
@@ -19,7 +19,7 @@ class GitlabTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($repoName, $api->getRepoName());
     }
 
-    public function remoteProvider()
+    public static function remoteProvider() : array
     {   
         return [
             ['git@gitlab.com:user/repo.git', 'gitlab.com', 'user/repo'],

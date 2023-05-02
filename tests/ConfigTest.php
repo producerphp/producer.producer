@@ -1,25 +1,22 @@
 <?php
 namespace Producer;
 
-class ConfigTest extends \PHPUnit_Framework_TestCase
+class ConfigTest extends \PHPUnit\Framework\TestCase
 {
     protected function mockFsio(array $returnData, $isFile = true)
     {
-        $fsio = $this->getMockBuilder(Fsio::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['isFile', 'parseIni'])
-            ->getMock();
-        $fsio
-            ->expects($this->any())
+        $fsio = $this->createMock(Fsio::class);
+
+        $fsio->expects($this->any())
             ->method('isFile')->will($this->returnValue($isFile));
-        $fsio
-            ->expects($this->any())
+
+        $fsio->expects($this->any())
             ->method('parseIni')->will($this->returnValue($returnData));
 
         return $fsio;
     }
 
-    public function testLoadHomeConfig()
+    public function testLoadHomeConfig() : void
     {
         $homefs = $this->mockFsio([
             'gitlab_token' => 'foobarbazdibzimgir',
@@ -59,7 +56,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expect, $actual);
     }
 
-    public function testGitHubHostOverride()
+    public function testGitHubHostOverride() : void
     {
         $homefs = $this->mockFsio([
             'github_hostname' => 'example.org',
@@ -98,7 +95,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expect, $actual);
     }
 
-    public function testGitlabHostOverride()
+    public function testGitlabHostOverride() : void
     {
         $homefs = $this->mockFsio([
             'gitlab_hostname' => 'example.org',
@@ -136,7 +133,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expect, $actual);
     }
 
-    public function testLoadHomeAndRepoConfig()
+    public function testLoadHomeAndRepoConfig() : void
     {
         $homefs = $this->mockFsio(['gitlab_token' => 'foobarbazdibzimgir']);
         $repofs = $this->mockFsio([

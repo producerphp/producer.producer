@@ -1,22 +1,22 @@
 <?php
 namespace Producer;
 
-class FsioTest extends \PHPUnit_Framework_TestCase
+class FsioTest extends \PHPUnit\Framework\TestCase
 {
     protected $fsio;
     protected $base;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->fsio = new Fsio(__DIR__);
     }
 
-    public function testIsDir()
+    public function testIsDir() : void
     {
         $this->assertTrue($this->fsio->isDir('../' . basename(__DIR__)));
     }
 
-    public function testMkdir()
+    public function testMkdir() : void
     {
         $dir = 'tmp';
         $this->fsio->rmdir($dir);
@@ -27,14 +27,12 @@ class FsioTest extends \PHPUnit_Framework_TestCase
         $this->fsio->rmdir($dir);
         $this->assertFalse($this->fsio->isDir($dir));
 
-        $this->setExpectedException(
-            'Producer\Exception',
-            'mkdir(): File exists'
-        );
+        $this->expectException('Producer\Exception');
+        $this->expectExceptionMessage('mkdir(): File exists');
         $this->fsio->mkdir('../' . basename(__DIR__));
     }
 
-    public function testPutAndGet()
+    public function testPutAndGet() : void
     {
         $file = 'fakefile';
         $this->fsio->unlink($file);
@@ -46,21 +44,17 @@ class FsioTest extends \PHPUnit_Framework_TestCase
         $this->fsio->unlink($file);
     }
 
-    public function testPut_error()
+    public function testPut_error() : void
     {
-        $this->setExpectedException(
-            'Producer\Exception',
-            'No such file or directory'
-        );
+        $this->expectException('Producer\Exception');
+        $this->expectExceptionMessage('No such file or directory');
         $this->fsio->put('no-such-directory/fakefile', 'fake text');
     }
 
-    public function testGet_error()
+    public function testGet_error() : void
     {
-        $this->setExpectedException(
-            'Producer\Exception',
-            'No such file or directory'
-        );
+        $this->expectException('Producer\Exception');
+        $this->expectExceptionMessage('No such file or directory');
         $this->fsio->get('no-such-directory/fakefile');
     }
 }

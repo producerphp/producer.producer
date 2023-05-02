@@ -3,12 +3,12 @@ namespace Producer;
 
 use Producer\Api\Github;
 
-class GitHubTest extends \PHPUnit_Framework_TestCase
+class GitHubTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider remoteProvider
      */
-    public function testRepoNameCanBeDerivedFromRemote($remote, $hostname, $repoName)
+    public function testRepoNameCanBeDerivedFromRemote($remote, $hostname, $repoName) : void
     {
         $api = new Github(
             $remote,
@@ -20,7 +20,7 @@ class GitHubTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($repoName, $api->getRepoName());
     }
 
-    public function remoteProvider()
+    public static function remoteProvider() : array
     {   
         return [
             ['git@github.com:user/repo.git', 'api.github.com', 'user/repo'],

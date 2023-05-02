@@ -37,10 +37,7 @@ class RepoTest extends \PHPUnit\Framework\TestCase
 {
     protected function mockFsio($text)
     {
-        $fsio = $this->getMockBuilder(Fsio::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['get'])
-            ->getMock();
+        $fsio = $this->createMock(Fsio::class);
 
         $fsio->expects($this->any())
             ->method('get')
@@ -51,10 +48,7 @@ class RepoTest extends \PHPUnit\Framework\TestCase
 
     protected function mockConfig(array $files)
     {
-        $config = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['get'])
-            ->getMock();
+        $config = $this->createMock(Config::class);
 
         $config->expects($this->any())
             ->method('get')
@@ -63,7 +57,7 @@ class RepoTest extends \PHPUnit\Framework\TestCase
         return $config;
     }
 
-    public function testGetChanges()
+    public function testGetChanges() : void
     {
         $fsio = $this->mockFsio($this->changelog);
         $logger = new Stdlog(STDOUT, STDERR);

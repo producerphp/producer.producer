@@ -5,7 +5,7 @@ namespace Producer;
 use Producer\Api\Github;
 use ReflectionClass;
 
-class ProducerContainerTest extends \PHPUnit_Framework_TestCase
+class ProducerContainerTest extends \PHPUnit\Framework\TestCase
 {
 
     /**
@@ -33,7 +33,7 @@ class ProducerContainerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($repoName, $api->getRepoName());
     }
 
-    public function githubProvider()
+    public static function githubProvider()
     {
         return [
             ['github.enterprise.com', 'git@github.enterprise.com:producer/producer.git', 'producer/producer'],
