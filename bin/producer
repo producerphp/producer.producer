@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Producer;
 
+use AutoShell\Console;
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('html_errors', 0);
@@ -36,20 +38,6 @@ $container = new ProducerContainer(
     STDERR
 );
 
-try {
-    array_shift($argv);
-    $name = array_shift($argv);
-
-    if (! $name) {
-        $class = "Producer\\Command\\Help";
-    } else {
-        $class = "Producer\\Command\\" . ucfirst($name);
-    }
-
-    $command = $container->newCommand($name);
-    $exit = (int) $command($argv);
-    exit($exit);
-} catch (\Exception $e) {
-    echo $e->getMessage() . PHP_EOL;
-    exit(1);
-}
+$console = $container->get(Console::class);
+$code = $console($_SERVER['argv']);
+exit($code);

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Producer;
 
+use AutoShell\Console;
 use Caplet\Caplet;
 use Producer\Api\ApiFactory;
 use Producer\Api\ApiInterface;
@@ -46,6 +47,16 @@ class ProducerContainer extends Caplet
         $this->factory(
             ApiInterface::class,
             fn (Caplet $caplet) : ApiInterface => $caplet->get(ApiFactory::class)->new()
+        );
+
+        $this->factory(
+            Console::class,
+            fn (Caplet $caplet) : Console => Console::new(
+                namespace: 'Producer\Command',
+                directory: __DIR__ . '/Command/',
+                factory: [$caplet, 'get'],
+                header: "Producer 2.0.0 by Paul M. Jones and contributors." . PHP_EOL . PHP_EOL,
+            )
         );
     }
 }

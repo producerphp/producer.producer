@@ -3,19 +3,12 @@ declare(strict_types=1);
 
 namespace Producer\Command;
 
-use Producer\Api\ApiInterface;
-use Producer\Exception;
-use Producer\Repo\RepoInterface;
-use Psr\Log\LoggerInterface;
+use AutoShell\Help;
+use AutoShell\Options;
+use Producer\Command;
 
-/**
- *
- * Validate the package but do not release it.
- *
- * @package producer/producer
- *
- */
-class Validate extends AbstractCommand
+#[Help("Validate the repository for a <version> release.")]
+class Validate extends Command
 {
     /**
      *
@@ -35,18 +28,15 @@ class Validate extends AbstractCommand
      */
     protected $version;
 
-    /**
-     *
-     * The command logic.
-     *
-     * @param array $argv Command line arguments.
-     *
-     * @return mixed
-     *
-     */
-    public function __invoke(array $argv)
+    public function __invoke(
+        Options $options,
+
+        #[Help("The version to release.")]
+        string $version
+
+    ) : int
     {
-        $this->setVersion(array_shift($argv));
+        $this->setVersion($version);
 
         $this->repo->sync();
         $this->repo->validateComposer();
@@ -61,6 +51,7 @@ class Validate extends AbstractCommand
         $this->repo->checkChanges();
         $this->checkIssues();
         $this->logger->info("{$this->package} {$this->version} appears valid for release!");
+        return 0;
     }
 
     /**
