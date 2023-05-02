@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace Producer;
 
+use Producer\Fsio\HomeFsio;
+use Producer\Fsio\RepoFsio;
+use Producer\Repo\RepoFactory;
 use Producer\Repo\RepoInterface;
 
 /**
@@ -99,34 +102,12 @@ class ProducerContainer
         $repofs = new RepoFsio($this->repodir);
         $config = new Config($homefs, $repofs);
 
-        $repo = $this->newRepo($repofs, $config);
+        $repoFactory = new RepoFactory($repofs, $this->logger, $config);
+
+        $repo = $repoFactory->new();
         $api = $this->newApi($repo->getOrigin(), $config);
 
         return new $class($this->logger, $repo, $api, $config);
-    }
-
-    /**
-     *
-     * Returns a new Repo object.
-     *
-     * @param Fsio $fsio A filesystem I/O object for the repository.
-     *
-     * @param Config $config Global and project configuration.
-     *
-     * @return RepoInterface
-     *
-     */
-    protected function newRepo($fsio, Config $config)
-    {
-        if ($fsio->isDir('.git')) {
-            return new Repo\Git($fsio, $this->logger, $config);
-        };
-
-        if ($fsio->isDir('.hg')) {
-            return new Repo\Hg($fsio, $this->logger, $config);
-        }
-
-        throw new Exception("Could not find .git or .hg files.");
     }
 
     /**
