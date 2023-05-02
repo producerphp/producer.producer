@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Producer;
 
 class FsioTest extends \PHPUnit\Framework\TestCase
