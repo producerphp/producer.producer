@@ -75,9 +75,6 @@ Inside your package repository, you may define a `.producer/config` file that
 sets any of the following options for that specific package.
 
 ```ini
-; custom @package docblock value
-package = Custom.Name
-
 ; custom hostnames for self-hosted origins
 github_hostname = example.com
 gitlab_hostname = example.net
@@ -109,7 +106,6 @@ for your library package repository. From there, you can call the following
 commands:
 
 - `producer issues` will show all the open issues from the remote origin
-- `producer phpdoc` will check the PHP docblocks in the `src/` directory
 - `producer validate <version>` will validate the package for release, but won't
    actually release it
 - `producer release <version>` will validate, and then actually release, the
@@ -130,7 +126,6 @@ When you validate the library package, Producer will:
 - Check for informational files (see below) and for a `phpunit.xml.dist` file
 - Check that the license file has the current year in it
 - Call `composer update`, run the unit tests, and make sure they cleaned up after
-- Check that the PHP docblocks in the `src/` directory are valid (see below)
 - Check that the changes file is in the most-recent commit to the repository
 
 If any of those fails, then the package is not considered valid for release.
@@ -150,12 +145,6 @@ Producer wants you to have these informational files in the package root:
 
 You may override these file names by setting the appropriate `.producer/config`
 directives.
-
-### Docblocks
-
-Producer will not attempt to check docblocks for 0.*, -dev, or -alpha releases.
-It seems reasonable to expect that the codebase is not ready for documenting
-before a beta release.
 
 ## Releasing
 

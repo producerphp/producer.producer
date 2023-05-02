@@ -54,7 +54,6 @@ class Help implements CommandInterface
         $this->logger->info('Producer: a tool for releasing library packages.');
         $this->logger->info('Available commands:');
         $this->logger->info('    issues -- Show open issues from the remote origin.');
-        $this->logger->info('    phpdoc -- Validate the PHP docblocks in the src directory.');
         $this->logger->info('    validate <version> -- Validate the repository for a <version> release.');
         $this->logger->info('    release <version> -- Release the repository as <version>.');
     }

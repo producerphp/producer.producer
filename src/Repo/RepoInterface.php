@@ -97,13 +97,6 @@ interface RepoInterface
 
     /**
      *
-     * Checks the `src/` docblocks using phpdoc.
-     *
-     */
-    public function checkDocblocks();
-
-    /**
-     *
      * Tags the repository.
      *
      * @param string $name The tag name.

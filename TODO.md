@@ -6,8 +6,6 @@
 
     - check previous major/minor/bugfix version numbers
 
-    - check for @license tag in file-level docblock
-
 - when `changes = CHANGELOG.*`, to get the change notes for the release, regex
   to find a line with `## VERSION` on it, up til the next `## *` heading.
 
