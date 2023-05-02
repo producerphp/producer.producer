@@ -5,7 +5,7 @@ namespace Producer\Api;
 
 use Producer\Api;
 use Producer\Exception;
-use Producer\Repo\RepoInterface;
+use Producer\Repo;
 
 class Bitbucket extends Api
 {
@@ -48,7 +48,7 @@ class Bitbucket extends Api
 
         return $issues;
     }
-    public function release(RepoInterface $repo, $version)
+    public function release(Repo $repo, string $version)
     {
         $repo->tag($version, "Released $version");
         $repo->sync();

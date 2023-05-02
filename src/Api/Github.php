@@ -5,7 +5,7 @@ namespace Producer\Api;
 
 use Producer\Api;
 use Producer\Exception;
-use Producer\Repo\RepoInterface;
+use Producer\Repo;
 
 class Github extends Api
 {
@@ -43,7 +43,7 @@ class Github extends Api
         return $issues;
     }
 
-    public function release(RepoInterface $repo, string $version)
+    public function release(Repo $repo, string $version)
     {
         $prerelease = substr($version, 0, 2) == '0.'
             || strpos($version, 'dev') !== false

@@ -5,9 +5,10 @@ namespace Producer\Repo;
 
 use Producer\Config;
 use Producer\Fsio\RepoFsio;
+use Producer\Repo;
 use Producer\Stdlog;
 
-class FakeRepo extends AbstractRepo
+class FakeRepo extends Repo
 {
     public function setOrigin()
     {

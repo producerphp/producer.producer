@@ -10,7 +10,7 @@ use Producer\Api\ApiFactory;
 use Producer\Fsio\HomeFsio;
 use Producer\Fsio\RepoFsio;
 use Producer\Repo\RepoFactory;
-use Producer\Repo\RepoInterface;
+use Producer\Repo;
 use Psr\Log\LoggerInterface;
 
 class ProducerContainer extends Caplet
@@ -35,16 +35,6 @@ class ProducerContainer extends Caplet
         ]);
 
         $this->factory(
-            LoggerInterface::class,
-            fn (Caplet $caplet) : Stdlog => $caplet->get(Stdlog::class)
-        );
-
-        $this->factory(
-            RepoInterface::class,
-            fn (Caplet $caplet) : RepoInterface => $caplet->get(RepoFactory::class)->new()
-        );
-
-        $this->factory(
             Api::class,
             fn (Caplet $caplet) : Api => $caplet->get(ApiFactory::class)->new()
         );
@@ -57,6 +47,16 @@ class ProducerContainer extends Caplet
                 factory: [$caplet, 'get'],
                 header: "Producer 2.0.0 by Paul M. Jones and contributors." . PHP_EOL . PHP_EOL,
             )
+        );
+
+        $this->factory(
+            LoggerInterface::class,
+            fn (Caplet $caplet) : Stdlog => $caplet->get(Stdlog::class)
+        );
+
+        $this->factory(
+            Repo::class,
+            fn (Caplet $caplet) : Repo => $caplet->get(RepoFactory::class)->new()
         );
     }
 }

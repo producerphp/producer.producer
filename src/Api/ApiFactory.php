@@ -6,12 +6,12 @@ namespace Producer\Api;
 use Producer\Config;
 use Producer\Exception;
 use Producer\Http;
-use Producer\Repo\RepoInterface;
+use Producer\Repo;
 
 class ApiFactory
 {
     public function __construct(
-        protected RepoInterface $repo,
+        protected Repo $repo,
         protected Config $config
     ) {
     }

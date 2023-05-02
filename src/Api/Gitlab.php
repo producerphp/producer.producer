@@ -5,7 +5,7 @@ namespace Producer\Api;
 
 use Producer\Api;
 use Producer\Exception;
-use Producer\Repo\RepoInterface;
+use Producer\Repo;
 
 class Gitlab extends Api
 {
@@ -50,7 +50,7 @@ class Gitlab extends Api
         return $issues;
     }
 
-    public function release(RepoInterface $repo, $version)
+    public function release(Repo $repo, string $version)
     {
         $query = [];
 

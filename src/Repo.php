@@ -1,78 +1,25 @@
 <?php
 declare(strict_types=1);
 
-namespace Producer\Repo;
+namespace Producer;
 
 use Producer\Config;
 use Producer\Exception;
 use Producer\Fsio\RepoFsio;
 use Psr\Log\LoggerInterface;
 
-/**
- *
- * Base class for local VCS repos.
- *
- * @package producer/producer
- *
- */
-abstract class AbstractRepo implements RepoInterface
+abstract class Repo
 {
-    /**
-     *
-     * The remote origin.
-     *
-     * @var array
-     *
-     */
-    protected $origin = [];
+    protected string $origin;
 
-    /**
-     *
-     * The `composer.json` data.
-     *
-     * @var object
-     *
-     */
     protected $composer;
 
-    /**
-     *
-     * A filesystem I/O object.
-     *
-     * @var Fsio
-     *
-     */
-    protected $fsio;
+    protected RepoFsio $fsio;
 
-    /**
-     *
-     * A logger.
-     *
-     * @var LoggerInterface
-     *
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    /**
-     *
-     * Global and project configuration.
-     *
-     * @var Config
-     *
-     */
-    protected $config;
+    protected Config $config;
 
-    /**
-     *
-     * Constructor.
-     *
-     * @param Fsio $fsio A filesystem I/O object.
-     *
-     * @param LoggerInterface $logger A logger.
-     *
-     * @param Config $config
-     *
-     */
     public function __construct(RepoFsio $fsio, LoggerInterface $logger, Config $config)
     {
         $this->fsio = $fsio;
@@ -81,52 +28,18 @@ abstract class AbstractRepo implements RepoInterface
         $this->setOrigin();
     }
 
-    /**
-     *
-     * Retains the remote origin for the repository from the VCS config file.
-     *
-     */
     abstract protected function setOrigin();
 
-
-    /**
-     *
-     * Returns the remote origin for the repository.
-     *
-     * @return string
-     *
-     */
     public function getOrigin()
     {
         return $this->origin;
     }
 
-    /**
-     *
-     * Returns the Composer package name.
-     *
-     * @return string
-     *
-     */
     public function getPackage()
     {
         return $this->getComposer()->name;
     }
 
-    /**
-     *
-     * Executes shell commands.
-     *
-     * @param string $cmd The shell command to execute.
-     *
-     * @param array $output Returns shell output through the reference.
-     *
-     * @param mixed $return Returns the exit code through this reference.
-     *
-     * @return string The last line of output.
-     *
-     * @see exec
-     */
     protected function shell($cmd, &$output = [], &$return = null)
     {
         $cmd = str_replace('; ', ';\\' . PHP_EOL, $cmd);
@@ -139,11 +52,6 @@ abstract class AbstractRepo implements RepoInterface
         return $last;
     }
 
-    /**
-     *
-     * Validates the `composer.json` file.
-     *
-     */
     public function validateComposer()
     {
         $last = $this->shell('composer validate', $output, $return);
@@ -152,13 +60,6 @@ abstract class AbstractRepo implements RepoInterface
         }
     }
 
-    /**
-     *
-     * Gets the `composer.json` file data.
-     *
-     * @return object
-     *
-     */
     public function getComposer()
     {
         if (! $this->composer) {
@@ -167,12 +68,6 @@ abstract class AbstractRepo implements RepoInterface
         return $this->composer;
     }
 
-    /**
-     *
-     * Checks all support files *except* for CHANGES; this is because updating
-     * the changes should be the very last thing to deal with.
-     *
-     */
     public function checkSupportFiles()
     {
         $files = $this->config->get('files');
@@ -182,13 +77,6 @@ abstract class AbstractRepo implements RepoInterface
         }
     }
 
-    /**
-     *
-     * Checks one support file.
-     *
-     * @param string $file The file to check.
-     *
-     */
     protected function checkSupportFile($file)
     {
         if (! $this->fsio->isFile($file)) {
@@ -199,11 +87,6 @@ abstract class AbstractRepo implements RepoInterface
         }
     }
 
-    /**
-     *
-     * Checks to see that the current year is in the LICENSE.
-     *
-     */
     public function checkLicenseYear()
     {
         $license = $this->fsio->get($this->config->get('files')['license']);
@@ -213,11 +96,6 @@ abstract class AbstractRepo implements RepoInterface
         }
     }
 
-    /**
-     *
-     * Runs the tests using phpunit.
-     *
-     */
     public function checkTests()
     {
         $this->shell('composer update');
@@ -231,16 +109,6 @@ abstract class AbstractRepo implements RepoInterface
         $this->checkStatus();
     }
 
-    /**
-     *
-     * Gets the contents of the CHANGES file.
-     *
-     * If the file is named CHANGELOG(*), then this will look for the first
-     * set of double-hashes (indicating a version heading) and only return the
-     * text until the next set of double-hashes. If there is no matching pair
-     * of double-hashes, it will return the entire text.
-     *
-     */
     public function getChanges()
     {
         $file = $this->config->get('files')['changes'];
@@ -259,11 +127,6 @@ abstract class AbstractRepo implements RepoInterface
         return $text;
     }
 
-    /**
-     *
-     * Checks to see if the changes are up to date.
-     *
-     */
     public function checkChanges()
     {
         $file = $this->config->get('files')['changes'];
