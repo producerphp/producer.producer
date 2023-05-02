@@ -5,42 +5,18 @@ namespace Producer;
 
 use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;
+use Stringable;
 
-/**
- *
- * A basic logger implementation that writes to standard output and error.
- *
- * @package producer/producer
- *
- */
 class Stdlog extends AbstractLogger
 {
     /**
      *
-     * The stdout file handle.
-     *
-     * @var resource
-     *
-     */
-    protected $stdout;
-
-    /**
-     *
-     * The stderr file handle.
-     *
-     * @var resource
-     *
-     */
-    protected $stderr;
-
-    /**
-     *
      * Write to stderr for these log levels.
      *
-     * @var array
+     * @var string[]
      *
      */
-    protected $stderrLevels = [
+    protected array $stderrLevels = [
         LogLevel::EMERGENCY,
         LogLevel::ALERT,
         LogLevel::CRITICAL,
@@ -48,42 +24,34 @@ class Stdlog extends AbstractLogger
     ];
 
     /**
-     *
-     * Constructor.
-     *
-     * @param resource $stdout Write to stdout on this handle.
-     *
-     * @param resource $stderr Write to stderr on this handle.
-     *
+     * @param resource $stdout
+     * @param resource $stderr
      */
-    public function __construct($stdout, $stderr)
-    {
-        $this->stdout = $stdout;
-        $this->stderr = $stderr;
+    public function __construct(
+        protected mixed $stdout,
+        protected mixed $stderr
+    ) {
     }
 
     /**
-     *
-     * Logs with an arbitrary level.
-     *
-     * @param mixed $level
-     *
-     * @param string $message
-     *
-     * @param array $context
-     *
-     * @return null
-     *
+     * @param mixed[] $context
      */
-    public function log($level, $message, array $context = [])
+    public function log(
+        mixed $level,
+        string|Stringable $message,
+        array $context = []
+    ) : void
     {
         $replace = [];
+
         foreach ($context as $key => $val) {
             $replace['{' . $key . '}'] = $val;
         }
-        $message = strtr($message, $replace) . PHP_EOL;
+
+        $message = strtr((string) $message, $replace) . PHP_EOL;
 
         $handle = $this->stdout;
+
         if (in_array($level, $this->stderrLevels)) {
             $handle = $this->stderr;
         }

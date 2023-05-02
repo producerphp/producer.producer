@@ -5,65 +5,24 @@ namespace Producer;
 
 use Producer\Exception;
 
-/**
- *
- * Filesystem input/output.
- *
- * @package producer/producer
- *
- */
 class Fsio
 {
-    /**
-     *
-     * The intended filesystem root; this is easy to subvert with '../' in file
-     * names.
-     *
-     * @var string
-     *
-     */
-    protected $root;
+    protected string $root;
 
-    /**
-     *
-     * Constructor.
-     *
-     * @param string $root The intended filesystem root; this is easy to
-     * subvert with '../' in file names.
-     *
-     */
-    public function __construct($root)
+    public function __construct(string $root)
     {
         $root = DIRECTORY_SEPARATOR . ltrim($root, DIRECTORY_SEPARATOR);
         $root = rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         $this->root = $root;
     }
 
-    /**
-     *
-     * Prefix the path to a file or directory with the root.
-     *
-     * @param string $spec The file or directory, relative to the root.
-     *
-     * @return string
-     *
-     */
-    public function path($spec)
+    public function path(string $spec) : string
     {
         $spec = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $spec);
         return $this->root . trim($spec, DIRECTORY_SEPARATOR);
     }
 
-    /**
-     *
-     * Equivalent of file_get_contents(), with error capture.
-     *
-     * @param string $file The file to read from.
-     *
-     * @return string
-     *
-     */
-    public function get($file)
+    public function get(string $file) : string
     {
         $file = $this->path($file);
 
@@ -75,20 +34,10 @@ class Fsio
             return $result;
         }
 
-        $error = error_get_last();
-        throw new Exception($error['message']);
+        $this->throwLastError();
     }
 
-    /**
-     *
-     * Equivalent of file_put_contents(), with error capture.
-     *
-     * @param string $file The file to write to.
-     *
-     * @param string $data The data to write to the file.
-     *
-     */
-    public function put($file, $data)
+    public function put(string $file, string $data) : int
     {
         $file = $this->path($file);
 
@@ -100,26 +49,17 @@ class Fsio
             return $result;
         }
 
-        $error = error_get_last();
-        throw new Exception($error['message']);
+        $this->throwLastError();
     }
 
     /**
-     *
-     * Equivalent of parse_ini_file(), with error capture.
-     *
-     * @param string $file The file to read from.
-     *
-     * @param bool $sections Process sections within the file?
-     *
-     * @param int $mode The INI scanner mode.
-     *
-     * @return array
-     *
-     * @see parse_ini_file()
-     *
+     * @return mixed[]
      */
-    public function parseIni($file, $sections = false, $mode = INI_SCANNER_NORMAL)
+    public function parseIni(
+        string $file,
+        bool $sections = false,
+        int $mode = INI_SCANNER_NORMAL
+    ) : array
     {
         $file = $this->path($file);
 
@@ -131,68 +71,33 @@ class Fsio
             return $result;
         }
 
-        $error = error_get_last();
-        throw new Exception($error['message']);
+        $this->throwLastError();
     }
 
-    /**
-     *
-     * Checks to see if one of the arguments is a readable file within the root.
-     *
-     * @param string $file The file to check.
-     *
-     * @return bool
-     *
-     */
-    public function isFile($file)
+    public function isFile(string $file) : bool
     {
         $path = $this->path($file);
         return file_exists($path) && is_readable($path);
     }
 
-    /**
-     *
-     * Deletes a file, if it exists.
-     *
-     * @param string $file The file to delete.
-     *
-     * @return mixed
-     *
-     */
-    public function unlink($file)
+    public function unlink(string $file) : void
     {
         if ($this->isFile($file)) {
-            return unlink($this->path($file));
+            unlink($this->path($file));
         }
     }
 
-    /**
-     *
-     * Checks to see if the argument is a directory within the root.
-     *
-     * @param string $dir The directory to check.
-     *
-     * @return bool
-     *
-     */
-    public function isDir($dir)
+    public function isDir(string $dir) : bool
     {
         $dir = $this->path($dir);
         return is_dir($dir);
     }
 
-    /**
-     *
-     * Makes a directory within the root.
-     *
-     * @param string $dir The directory to make.
-     *
-     * @param string $mode The permissions.
-     *
-     * @param string $deep Create intervening directories?
-     *
-     */
-    public function mkdir($dir, $mode = 0777, $deep = true)
+    public function mkdir(
+        string $dir,
+        int $mode = 0777,
+        bool $deep = true
+    ) : void
     {
         $dir = $this->path($dir);
 
@@ -204,37 +109,17 @@ class Fsio
             return;
         }
 
-        $error = error_get_last();
-        throw new Exception($error['message']);
+        $this->throwLastError();
     }
 
-    /**
-     *
-     * Removes a directory, if it exists.
-     *
-     * @param string $dir The directory to remove.
-     *
-     * @return mixed
-     *
-     */
-    public function rmdir($dir)
+    public function rmdir(string $dir) : void
     {
         if ($this->isDir($dir)) {
-            return rmdir($this->path($dir));
+            rmdir($this->path($dir));
         }
     }
 
-    /**
-     *
-     * Gets the system temporary directory, with an optional subdirectory;
-     * creates the subdirectory if needed.
-     *
-     * @param string $sub The temporary subdirectory.
-     *
-     * @return string The path to the temporary directory.
-     *
-     */
-    public function sysTempDir($sub = null)
+    public function sysTempDir(string $sub = '') : string
     {
         $sub = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $sub);
 
@@ -253,6 +138,31 @@ class Fsio
             return $dir;
         }
 
+        $this->throwLastError();
+    }
+
+    /**
+     * @return string[]
+     */
+    public function glob(string $pattern, int $flags = 0) : array
+    {
+        $list = [];
+        $pattern = $this->path($pattern);
+        $glob = (array) glob($pattern, $flags);
+
+        foreach ($glob as $val) {
+            $list[] = substr((string) $val, strlen($this->root));
+        }
+
+        return $list;
+    }
+
+    /**
+     * @return never
+     */
+    protected function throwLastError() : void
+    {
+        /** @var array{type: int, message: string, file: string, line: int} */
         $error = error_get_last();
         throw new Exception($error['message']);
     }

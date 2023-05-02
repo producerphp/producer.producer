@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Producer;
 
-use Producer\Exception;
-use Producer\Http;
+use stdClass;
+use Generator;
 
 abstract class Api
 {
@@ -12,30 +12,33 @@ abstract class Api
 
     protected string $repoName;
 
-    public function getRepoName()
+    public function getRepoName() : string
     {
         return $this->repoName;
     }
 
-    protected function setHttp(string $base)
+    protected function setHttp(string $base) : void
     {
         $this->http = new Http($base);
     }
 
-    protected function setRepoNameFromOrigin(string $origin)
+    protected function setRepoNameFromOrigin(string $origin) : void
     {
         // if ssh, strip username off so  `parse_url` can work as expected
         if (strpos($origin, 'git@') !== false) {
-            $origin = substr($origin, 4);
+            $origin = (string) substr($origin, 4);
         }
 
         // get path from url, strip .git from the end, and retain
-        $repoName = parse_url($origin, PHP_URL_PATH);
-        $repoName = preg_replace('/\.git$/', '', $repoName);
+        $repoName = (string) parse_url($origin, PHP_URL_PATH);
+        $repoName = (string) preg_replace('/\.git$/', '', $repoName);
         $this->repoName = trim($repoName, '/');
     }
 
-    protected function httpGet(string $path, array $query = [])
+    /**
+     * @param array<string, mixed> $query
+     */
+    protected function httpGet(string $path, array $query = []) : Generator
     {
         $page = 1;
         do {
@@ -43,7 +46,7 @@ abstract class Api
             $query['page'] = $page;
             $query = $this->httpQuery($query);
             $json = $this->http->get($path, $query);
-            foreach ($this->httpValues($json) as $item) {
+            foreach ((array) $this->httpValues($json) as $item) {
                 $found = true;
                 yield $item;
             }
@@ -51,13 +54,21 @@ abstract class Api
         } while ($found);
     }
 
-    protected function httpPost(string $path, array $query = [], array $data = [])
+    /**
+     * @param array<string, mixed> $query
+     * @param array<string, mixed> $data
+     */
+    protected function httpPost(string $path, array $query = [], array $data = []) : stdClass
     {
         $query = $this->httpQuery($query);
         return $this->httpValues($this->http->post($path, $query, $data));
     }
 
-    protected function httpQuery(array $query, int $page = 0)
+    /**
+     * @param array<string, mixed> $query
+     * @return array<string, mixed>
+     */
+    protected function httpQuery(array $query, int $page = 0) : array
     {
         if ($page) {
             $query['page'] = $page;
@@ -66,8 +77,16 @@ abstract class Api
         return $query;
     }
 
-    protected function httpValues($json)
+    protected function httpValues(stdClass $json) : stdClass
     {
         return $json;
     }
+
+
+    /**
+     * @return array<int, object{title:string, number:numeric-string, url:string}>
+     */
+    abstract public function issues() : array;
+
+    abstract public function release(Repo $repo, string $version) : void;
 }

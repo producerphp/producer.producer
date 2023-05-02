@@ -4,14 +4,41 @@ declare(strict_types=1);
 namespace Producer;
 
 use Psr\Log\LogLevel;
+use RuntimeException;
 
 class StdlogTest extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * @var resource
+     */
+    protected mixed $stdout;
+
+    /**
+     * @var resource
+     */
+    protected mixed $stderr;
+
+    protected Stdlog $logger;
+
     public function setUp() : void
     {
-        $this->stdout = fopen('php://memory', 'rw+');
-        $this->stderr = fopen('php://memory', 'rw+');
+        $this->stdout = $this->memory();
+        $this->stderr = $this->memory();
         $this->logger = new Stdlog($this->stdout, $this->stderr);
+    }
+
+    /**
+     * @return resource
+     */
+    protected function memory() : mixed
+    {
+        $handle = fopen('php://memory', 'rw+');
+
+        if (! $handle) {
+            throw new RuntimeException("Could not open memory handle.");
+        }
+
+        return $handle;
     }
 
     public function testLog_stdout() : void
@@ -28,7 +55,10 @@ class StdlogTest extends \PHPUnit\Framework\TestCase
         $this->assertLogged('Foo baz' . PHP_EOL, $this->stderr);
     }
 
-    protected function assertLogged($expect, $handle) : void
+    /**
+     * @param resource $handle
+     */
+    protected function assertLogged(string $expect, mixed $handle) : void
     {
         rewind($handle);
         $actual = '';

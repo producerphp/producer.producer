@@ -3,52 +3,24 @@ declare(strict_types=1);
 
 namespace Producer;
 
-/**
- *
- * An HTTP caller.
- *
- * @package producer/producer
- *
- */
+use stdClass;
+
 class Http
 {
-    /**
-     *
-     * The base URL for HTTP calls.
-     *
-     * @var string
-     *
-     */
-    protected $base;
-
-    /**
-     *
-     * Constructor.
-     *
-     * @param string $base The base URL for HTTP calls.
-     *
-     */
-    public function __construct($base)
+    public function __construct(protected string $base)
     {
-        $this->base = $base;
     }
 
     /**
-     *
-     * Make an HTTP request.
-     *
-     * @param string $method The HTTP method.
-     *
-     * @param string $path Append this path to the base URL.
-     *
-     * @param array $query Query parameters.
-     *
-     * @param array $data Data to be JSON-encoded as the message body.
-     *
-     * @return mixed The HTTP response.
-     *
+     * @param array<string, mixed> $query
+     * @param array<string, mixed> $data
      */
-    public function __invoke($method, $path, array $query = [], array $data = [])
+    public function __invoke(
+        string $method,
+        string $path,
+        array $query = [],
+        array $data = []
+    ) : stdClass
     {
         $url = $this->base . $path;
         if ($query) {
@@ -56,55 +28,31 @@ class Http
         }
 
         $context = $this->newContext($method, $data);
-        return json_decode(file_get_contents($url, FALSE, $context));
+        return (object) json_decode((string) file_get_contents($url, false, $context));
     }
 
     /**
-     *
-     * Convenience method for HTTP GET.
-     *
-     * @param string $path Append this path to the base URL.
-     *
-     * @param array $query Query parameters.
-     *
-     * @return mixed The HTTP response.
-     *
+     * @param array<string, mixed> $query
      */
-    public function get($path, array $query = [])
+    public function get(string $path, array $query = []) : stdClass
     {
         return $this('GET', $path, $query);
     }
 
     /**
-     *
-     * Convenience method for HTTP POST.
-     *
-     * @param string $path Append this path to the base URL.
-     *
-     * @param array $query Query parameters.
-     *
-     * @param array $data Data to be JSON-encoded as the message body.
-     *
-     * @return mixed The HTTP response.
-     *
+     * @param array<string, mixed> $query
+     * @param array<string, mixed> $data
      */
-    public function post($path, array $query = [], array $data = [])
+    public function post(string $path, array $query = [], array $data = []) : stdClass
     {
         return $this('POST', $path, $query, $data);
     }
 
     /**
-     *
-     * Creates a new stream context.
-     *
-     * @param string $method The HTTP method.
-     *
-     * @param array $data Data to be JSON-encoded as the message body.
-     *
+     * @param array<string, mixed> $data
      * @return resource
-     *
      */
-    protected function newContext($method, array $data = [])
+    protected function newContext(string $method, array $data = []) : mixed
     {
         $http = [
             'method' => $method,

@@ -6,6 +6,7 @@ namespace Producer\Repo;
 use Producer\Config;
 use Producer\Exception;
 use Producer\Fsio\RepoFsio;
+use Producer\Repo;
 use Psr\Log\LoggerInterface;
 
 class RepoFactory
@@ -17,7 +18,7 @@ class RepoFactory
     ) {
     }
 
-    public function new()
+    public function new() : Repo
     {
         if ($this->repofs->isDir('.git')) {
             return new Git($this->repofs, $this->logger, $this->config);

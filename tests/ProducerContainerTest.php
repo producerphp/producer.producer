@@ -5,7 +5,7 @@ namespace Producer;
 
 class ProducerContainerTest extends \PHPUnit\Framework\TestCase
 {
-    public function testNewCommand()
+    public function test() : void
     {
         $container = new ProducerContainer(
             $_SERVER['HOME'],
@@ -13,6 +13,7 @@ class ProducerContainerTest extends \PHPUnit\Framework\TestCase
             STDOUT,
             STDERR
         );
+
         $this->assertInstanceOf(Command\Validate::class, $container->new(Command\Validate::class));
     }
 }

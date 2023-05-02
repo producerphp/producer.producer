@@ -6,6 +6,7 @@ namespace Producer\Api;
 use Producer\Api;
 use Producer\Exception;
 use Producer\Repo;
+use stdClass;
 
 class Bitbucket extends Api
 {
@@ -15,18 +16,21 @@ class Bitbucket extends Api
         $this->setRepoNameFromOrigin($origin);
     }
 
-    protected function setRepoNameFromOrigin($origin)
+    protected function setRepoNameFromOrigin(string $origin) : void
     {
-        $repoName = parse_url($origin, PHP_URL_PATH);
-        $repoName = preg_replace('/\.hg$/', '', $repoName);
+        $repoName = (string) parse_url($origin, PHP_URL_PATH);
+        $repoName = (string) preg_replace('/\.hg$/', '', $repoName);
         $this->repoName = trim($repoName, '/');
     }
 
-    protected function httpValues($json)
+    protected function httpValues(stdClass $json) : stdClass
     {
         return $json->values;
     }
 
+    /**
+     * @return array<int, object{title:string, number:numeric-string, url:string}>
+     */
     public function issues() : array
     {
         $issues = [];
@@ -38,6 +42,7 @@ class Bitbucket extends Api
             ]
         );
 
+        /** @var object{title: string, id: numeric-string} $issue */
         foreach ($yield as $issue) {
             $issues[] = (object) [
                 'title' => $issue->title,
@@ -48,7 +53,8 @@ class Bitbucket extends Api
 
         return $issues;
     }
-    public function release(Repo $repo, string $version)
+
+    public function release(Repo $repo, string $version) : void
     {
         $repo->tag($version, "Released $version");
         $repo->sync();

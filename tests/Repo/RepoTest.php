@@ -8,39 +8,18 @@ use Producer\Fsio\RepoFsio;
 use Producer\Repo;
 use Producer\Stdlog;
 
-class FakeRepo extends Repo
-{
-    public function setOrigin()
-    {
-        $this->origin = 'FAKE';
-    }
-
-    public function getBranch()
-    {
-
-    }
-
-    public function checkStatus()
-    {
-
-    }
-
-    public function tag($name, $message)
-    {
-
-    }
-
-    public function sync()
-    {
-
-    }
-}
-
 class RepoTest extends \PHPUnit\Framework\TestCase
 {
-    protected function mockRepoFsio($text)
+    protected function mockRepoFsio(string $text) : RepoFsio
     {
         $repofs = $this->createMock(RepoFsio::class);
+
+        $repofs->expects($this->any())
+            ->method('glob')
+            ->will($this->returnValueMap([
+                ['CHANGELOG', GLOB_MARK, []],
+                ['CHANGELOG.*', GLOB_MARK, ['CHANGELOG.md']]
+            ]));
 
         $repofs->expects($this->any())
             ->method('get')
@@ -49,39 +28,24 @@ class RepoTest extends \PHPUnit\Framework\TestCase
         return $repofs;
     }
 
-    protected function mockConfig(array $files)
+    protected function mockConfig() : Config
     {
-        $config = $this->createMock(Config::class);
-
-        $config->expects($this->any())
-            ->method('get')
-            ->will($this->returnValue($files));
-
-        return $config;
+        return $this->createMock(Config::class);
     }
 
     public function testGetChanges() : void
     {
         $repofs = $this->mockRepoFsio($this->changelog);
         $logger = new Stdlog(STDOUT, STDERR);
-        $config = $this->mockConfig([
-            'changes' => 'CHANGES.md',
-        ]);
-        $repo = new FakeRepo($repofs, $logger, $config);
-        $actual = $repo->getChanges();
-        $expect = $this->changelog;
-        $this->assertSame($expect, $actual);
+        $config = $this->mockConfig();
 
-        $config = $this->mockConfig([
-            'changes' => 'CHANGELOG.md',
-        ]);
         $repo = new FakeRepo($repofs, $logger, $config);
         $actual = $repo->getChanges();
         $expect = trim($this->subset);
         $this->assertSame($expect, $actual);
     }
 
-    protected $subset = "
+    protected string $subset = "
 - Added `--no-docs` option to suppress running PHPDocumentor; this is for
   projects release versions using PHP 7.1 nullable types, which PHPDocumentor
   does not support yet.
@@ -89,7 +53,7 @@ class RepoTest extends \PHPUnit\Framework\TestCase
 - Renamed CHANGES.md to CHANGELOG.md; now compliant with `pds/skeleton`.
 ";
 
-    protected $changelog = "# CHANGELOG
+    protected string $changelog = "# CHANGELOG
 
 ## 2.2.0
 

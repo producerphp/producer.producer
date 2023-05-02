@@ -21,12 +21,18 @@ class Gitlab extends Api
         $this->setRepoNameFromOrigin($origin);
     }
 
-    protected function httpQuery(array $query, int $page = 0)
+    /**
+     * @inheritdoc
+     */
+    protected function httpQuery(array $query, int $page = 0) : array
     {
         $query['private_token'] = $this->token;
         return parent::httpQuery($query, $page);
     }
 
+    /**
+     * @return array<int, object{title:string, number:numeric-string, url:string}>
+     */
     public function issues() : array
     {
         $issues = [];
@@ -39,6 +45,7 @@ class Gitlab extends Api
             ]
         );
 
+        /** @var object{iid:numeric-string, title:string} $issue */
         foreach ($yield as $issue) {
             $issues[] = (object) [
                 'number' => $issue->iid,
@@ -50,7 +57,7 @@ class Gitlab extends Api
         return $issues;
     }
 
-    public function release(Repo $repo, string $version)
+    public function release(Repo $repo, string $version) : void
     {
         $query = [];
 

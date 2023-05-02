@@ -16,13 +16,9 @@ use Producer\Fsio\RepoFsio;
 class Config
 {
     /**
-     *
-     * The config values with defaults.
-     *
-     * @var array
-     *
+     * @var array<string, ?string>
      */
-    protected $data = [
+    protected array $data = [
         'bitbucket_hostname' => 'api.bitbucket.org',
         'bitbucket_username' => null,
         'bitbucket_password' => null,
@@ -31,124 +27,52 @@ class Config
         'github_token' => null,
         'gitlab_hostname' => 'gitlab.com',
         'gitlab_token' => null,
-        'package' => '',
-        'commands' => [
-            'phpdoc' => 'phpdoc',
-            'phpunit' => 'phpunit',
-        ],
-        'files' => [
-            'changes' => 'CHANGES.md',
-            'contributing' => 'CONTRIBUTING.md',
-            'license' => 'LICENSE.md',
-            'phpunit' => 'phpunit.xml.dist',
-            'readme' => 'README.md',
-        ],
+        'quality_command' => null,
     ];
 
-    /**
-     *
-     * The name of the Producer config file, wherever located.
-     *
-     * @var string
-     *
-     */
-    protected $configFile = '.producer/config';
+    protected string $configFile = '.producer/config';
 
-    /**
-     *
-     * Constructor.
-     *
-     * @param Fsio $homefs The user's home directory filesystem.
-     *
-     * @param Fsio $repofs The package repository filesystem.
-     *
-     * @throws Exception
-     *
-     */
     public function __construct(HomeFsio $homefs, RepoFsio $repofs)
     {
         $this->loadHomeConfig($homefs);
         $this->loadRepoConfig($repofs);
     }
 
-    /**
-     *
-     * Loads the user's home directory Producer config file.
-     *
-     * @param Fsio $homefs
-     *
-     * @throws Exception
-     *
-     */
-    protected function loadHomeConfig(HomeFsio $homefs)
+    protected function loadHomeConfig(HomeFsio $homefs) : void
     {
         if (! $homefs->isFile($this->configFile)) {
             $path = $homefs->path($this->configFile);
             throw new Exception("Config file {$path} not found.");
         }
 
-        $config = $homefs->parseIni($this->configFile, true);
+        $config = $homefs->parseIni($this->configFile);
         $this->data = array_replace_recursive($this->data, $config);
     }
 
-    /**
-     *
-     * Loads the project's config file, if it exists.
-     *
-     * @param Fsio $fsio
-     *
-     * @throws Exception
-     *
-     */
-    public function loadRepoConfig(RepoFsio $repofs)
+    public function loadRepoConfig(RepoFsio $repofs) : void
     {
         if (! $repofs->isFile($this->configFile)) {
             return;
         }
 
-        $config = $repofs->parseIni($this->configFile, true);
+        $config = $repofs->parseIni($this->configFile);
         $this->data = array_replace_recursive($this->data, $config);
     }
 
-    /**
-     *
-     * Returns a config value.
-     *
-     * @param string $key The config value.
-     *
-     * @return mixed
-     *
-     */
-    public function get($key)
+    public function get(string $key) : ?string
     {
-        if (isset($this->data[$key])) {
-            return $this->data[$key];
-        }
-
-        throw new Exception("No config value set for '$key'.");
+        return $this->data[$key];
     }
 
-    /**
-     *
-     * Confirm that a config value is set
-     *
-     * @param $key
-     *
-     * @return bool
-     *
-     */
-    public function has($key) {
+    public function has(string $key) : bool
+    {
         return (isset($this->data[$key]));
     }
 
     /**
-     *
-     * Return all configuration data
-     *
-     * @return array
-     *
+     * @return array<string, ?string>
      */
-    public function getAll()
+    public function getAll() : array
     {
         return $this->data;
     }

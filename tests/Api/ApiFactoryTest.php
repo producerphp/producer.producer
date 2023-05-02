@@ -11,7 +11,11 @@ class ApiFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider githubProvider
      */
-    public function testThatItReturnsAppropriateApiImplementationForGithub($host, $origin, $repoName)
+    public function testThatItReturnsAppropriateApiImplementationForGithub(
+        string $host,
+        string $origin,
+        string $repoName
+    ) : void
     {
         $repo = $this->mockRepo($origin);
 
@@ -28,6 +32,9 @@ class ApiFactoryTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($repoName, $api->getRepoName());
     }
 
+    /**
+     * @return array<string[]>
+     */
     public static function githubProvider()
     {
         return [
@@ -37,11 +44,12 @@ class ApiFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @param mixed[] $data
      */
-    protected function mockConfig($data)
+    protected function mockConfig(array $data) : Config
     {
         $config = $this->createMock(Config::class);
+        $valueMap = [];
 
         foreach ($data as $arg => $return) {
             $valueMap[] = [$arg, $return];
@@ -54,10 +62,7 @@ class ApiFactoryTest extends \PHPUnit\Framework\TestCase
         return $config;
     }
 
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function mockRepo($origin)
+    protected function mockRepo(string $origin) : Git
     {
         $repo = $this->createMock(Git::class);
 

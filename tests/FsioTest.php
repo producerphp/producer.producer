@@ -5,8 +5,8 @@ namespace Producer;
 
 class FsioTest extends \PHPUnit\Framework\TestCase
 {
-    protected $fsio;
-    protected $base;
+    protected Fsio $fsio;
+    protected string $base;
 
     protected function setUp() : void
     {

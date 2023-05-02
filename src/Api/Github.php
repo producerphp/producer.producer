@@ -20,6 +20,9 @@ class Github extends Api
         $this->setRepoNameFromOrigin($origin);
     }
 
+    /**
+     * @return array<int, object{title:string, number:numeric-string, url:string}>
+     */
     public function issues() : array
     {
         $issues = [];
@@ -32,6 +35,7 @@ class Github extends Api
             ]
         );
 
+        /** @var object{title: string, number: numeric-string, html_url: string} $issue */
         foreach ($yield as $issue) {
             $issues[] = (object) [
                 'title' => $issue->title,
@@ -43,7 +47,7 @@ class Github extends Api
         return $issues;
     }
 
-    public function release(Repo $repo, string $version)
+    public function release(Repo $repo, string $version) : void
     {
         $prerelease = substr($version, 0, 2) == '0.'
             || strpos($version, 'dev') !== false

@@ -8,7 +8,10 @@ use Producer\Fsio\RepoFsio;
 
 class ConfigTest extends \PHPUnit\Framework\TestCase
 {
-    protected function mockHomeFsio(array $returnData, $isFile = true)
+    /**
+     * @param mixed[] $returnData
+     */
+    protected function mockHomeFsio(array $returnData, bool $isFile = true) : HomeFsio
     {
         $homefs = $this->createMock(HomeFsio::class);
 
@@ -21,7 +24,10 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         return $homefs;
     }
 
-    protected function mockRepoFsio(array $returnData, $isFile = true)
+    /**
+     * @param mixed[] $returnData
+     */
+    protected function mockRepoFsio(array $returnData, bool $isFile = true) : RepoFsio
     {
         $repofs = $this->createMock(RepoFsio::class);
 
@@ -38,9 +44,6 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     {
         $homefs = $this->mockHomeFsio([
             'gitlab_token' => 'foobarbazdibzimgir',
-            'commands' => [
-                'phpunit' => '/path/to/phpunit',
-            ]
         ]);
 
         $repofs = $this->mockRepoFsio([], false);
@@ -56,18 +59,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             'github_token' => null,
             'gitlab_hostname' => 'gitlab.com',
             'gitlab_token' => 'foobarbazdibzimgir',
-            'package' => '',
-            'commands' => [
-                'phpdoc' => 'phpdoc',
-                'phpunit' => '/path/to/phpunit',
-            ],
-            'files' => [
-                'changes' => 'CHANGES.md',
-                'contributing' => 'CONTRIBUTING.md',
-                'license' => 'LICENSE.md',
-                'phpunit' => 'phpunit.xml.dist',
-                'readme' => 'README.md',
-            ],
+            'quality_command' => null,
         ];
 
         $actual = $config->getAll();
@@ -96,18 +88,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             'github_token' => 'bar',
             'gitlab_hostname' => 'gitlab.com',
             'gitlab_token' => null,
-            'package' => '',
-            'commands' => [
-                'phpdoc' => 'phpdoc',
-                'phpunit' => 'phpunit',
-            ],
-            'files' => [
-                'changes' => 'CHANGES.md',
-                'contributing' => 'CONTRIBUTING.md',
-                'license' => 'LICENSE.md',
-                'phpunit' => 'phpunit.xml.dist',
-                'readme' => 'README.md',
-            ],
+            'quality_command' => null,
         ];
 
         $actual = $config->getAll();
@@ -135,18 +116,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             'github_token' => null,
             'gitlab_hostname' => 'example.org',
             'gitlab_token' => 'bar',
-            'package' => '',
-            'commands' => [
-                'phpdoc' => 'phpdoc',
-                'phpunit' => 'phpunit',
-            ],
-            'files' => [
-                'changes' => 'CHANGES.md',
-                'contributing' => 'CONTRIBUTING.md',
-                'license' => 'LICENSE.md',
-                'phpunit' => 'phpunit.xml.dist',
-                'readme' => 'README.md',
-            ],
+            'quality_command' => null,
         ];
 
         $actual = $config->getAll();
@@ -158,15 +128,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     {
         $homefs = $this->mockHomeFsio(['gitlab_token' => 'foobarbazdibzimgir']);
 
-        $repofs = $this->mockRepoFsio([
-            'package' => 'Foo.Bar',
-            'commands' => [
-                'phpunit' => './vendor/bin/phpunit'
-            ],
-            'files' => [
-                'contributing' => '.github/CONTRIBUTING'
-            ],
-        ]);
+        $repofs = $this->mockRepoFsio([]);
 
         $config = new Config($homefs, $repofs);
 
@@ -179,18 +141,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             'github_token' => null,
             'gitlab_hostname' => 'gitlab.com',
             'gitlab_token' => 'foobarbazdibzimgir',
-            'package' => 'Foo.Bar',
-            'commands' => [
-                'phpdoc' => 'phpdoc',
-                'phpunit' => './vendor/bin/phpunit',
-            ],
-            'files' => [
-                'changes' => 'CHANGES.md',
-                'contributing' => '.github/CONTRIBUTING',
-                'license' => 'LICENSE.md',
-                'phpunit' => 'phpunit.xml.dist',
-                'readme' => 'README.md',
-            ],
+            'quality_command' => null,
         ];
 
         $actual = $config->getAll();

@@ -8,8 +8,9 @@ use Producer\Repo;
 
 class Hg extends Repo
 {
-    protected function setOrigin()
+    protected function setOrigin() : void
     {
+        /** @var array{'paths': ?array{'default': ?string}} */
         $data = $this->fsio->parseIni('.hg/hgrc', true);
 
         if (! isset($data['paths']['default'])) {
@@ -19,7 +20,7 @@ class Hg extends Repo
         $this->origin = $data['paths']['default'];
     }
 
-    public function getBranch()
+    public function getBranch() : string
     {
         $branch = $this->shell('hg branch', $output, $return);
         if ($return) {
@@ -28,7 +29,7 @@ class Hg extends Repo
         return trim($branch);
     }
 
-    public function sync()
+    public function sync() : void
     {
         $this->shell('hg pull -u', $output, $return);
         if ($return) {
@@ -45,7 +46,7 @@ class Hg extends Repo
         $this->checkStatus();
     }
 
-    public function checkStatus()
+    public function checkStatus() : void
     {
         $this->shell('hg status', $output, $return);
         if ($return || $output) {
@@ -53,24 +54,23 @@ class Hg extends Repo
         }
     }
 
-    public function getChangesDate()
+    public function getChangesDate() : string
     {
-        $changes = $this->config->get('files')['changes'];
-        if (! $this->fsio->isFile($changes)) {
-            throw new Exception("File '{$changes}' is missing.");
-        }
-
+        $changes = $this->checkSupportFile('CHANGELOG');
         $this->shell("hg log --limit 1 {$changes}", $output, $return);
         return $this->findDate($output);
     }
 
-    public function getLastCommitDate()
+    public function getLastCommitDate() : string
     {
         $this->shell("hg log --limit 1", $output, $return);
         return $this->findDate($output);
     }
 
-    protected function findDate(array $lines)
+    /**
+     * @param string[] $lines
+     */
+    protected function findDate(array $lines) : string
     {
         foreach ($lines as $line) {
             if (substr($line, 0, 5) == 'date:') {
@@ -81,16 +81,20 @@ class Hg extends Repo
         throw new Exception("No 'date:' line found.");
     }
 
-    public function logSinceDate($date)
+    /**
+     * @return string[]
+     */
+    public function logSinceDate(string $date) : array
     {
         $this->shell("hg log --rev : --date '$date to now'", $output);
         return $output;
     }
 
-    public function tag($name, $message)
+    public function tag(string $version, string $message) : void
     {
         $message = escapeshellarg($message);
-        $last = $this->shell("hg tag $name --message=$message", $output, $return);
+        $last = $this->shell("hg tag $version --message=$message", $output, $return);
+
         if ($return) {
             throw new Exception($last);
         }
