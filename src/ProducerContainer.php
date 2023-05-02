@@ -3,20 +3,16 @@ declare(strict_types=1);
 
 namespace Producer;
 
+use Caplet\Caplet;
 use Producer\Api\ApiFactory;
+use Producer\Api\ApiInterface;
 use Producer\Fsio\HomeFsio;
 use Producer\Fsio\RepoFsio;
 use Producer\Repo\RepoFactory;
 use Producer\Repo\RepoInterface;
+use Psr\Log\LoggerInterface;
 
-/**
- *
- * A container for all Producer objects.
- *
- * @package producer/producer
- *
- */
-class ProducerContainer
+class ProducerContainer extends Caplet
 {
     public function __construct(
         protected string $homedir,
@@ -24,41 +20,32 @@ class ProducerContainer
         protected mixed $stdout = STDOUT,
         protected mixed $stderr = STDERR
     ) {
-    }
+        parent::__construct([
+            HomeFsio::class => [
+                'root' => $homedir,
+            ],
+            RepoFsio::class => [
+                'root' => $repodir,
+            ],
+            Stdlog::class => [
+                'stdout' => $stdout,
+                'stderr' => $stderr,
+            ],
+        ]);
 
-    /**
-     *
-     * Returns a new Command object.
-     *
-     * @param string $name The command name.
-     *
-     * @return Command\CommandInterface
-     *
-     */
-    public function newCommand($name)
-    {
-        $logger = new Stdlog($this->stdout, $this->stderr);
+        $this->factory(
+            LoggerInterface::class,
+            fn (Caplet $caplet) : Stdlog => $caplet->get(Stdlog::class)
+        );
 
-        $name = trim($name);
-        if (! $name || $name == 'help') {
-            return new Command\Help($logger);
-        }
+        $this->factory(
+            RepoInterface::class,
+            fn (Caplet $caplet) : RepoInterface => $caplet->get(RepoFactory::class)->new()
+        );
 
-        $class = "Producer\\Command\\" . ucfirst($name);
-        if (! class_exists($class)) {
-            throw new Exception("Command '$name' not found.");
-        }
-
-        $homefs = new HomeFsio($this->homedir);
-        $repofs = new RepoFsio($this->repodir);
-        $config = new Config($homefs, $repofs);
-
-        $repoFactory = new RepoFactory($repofs, $logger, $config);
-        $repo = $repoFactory->new();
-
-        $apiFactory = new ApiFactory($repo, $config);
-        $api = $apiFactory->new();
-
-        return new $class($logger, $repo, $api, $config);
+        $this->factory(
+            ApiInterface::class,
+            fn (Caplet $caplet) : ApiInterface => $caplet->get(ApiFactory::class)->new()
+        );
     }
 }

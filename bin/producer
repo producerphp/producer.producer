@@ -39,6 +39,13 @@ $container = new ProducerContainer(
 try {
     array_shift($argv);
     $name = array_shift($argv);
+
+    if (! $name) {
+        $class = "Producer\\Command\\Help";
+    } else {
+        $class = "Producer\\Command\\" . ucfirst($name);
+    }
+
     $command = $container->newCommand($name);
     $exit = (int) $command($argv);
     exit($exit);
