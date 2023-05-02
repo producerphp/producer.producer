@@ -3,31 +3,13 @@ declare(strict_types=1);
 
 namespace Producer\Api;
 
+use Producer\Api;
 use Producer\Exception;
 use Producer\Repo\RepoInterface;
 
-/**
- *
- * The Github API.
- *
- * @package producer/producer
- *
- */
-class Github extends AbstractApi
+class Github extends Api
 {
-    /**
-     *
-     * Constructor.
-     *
-     * @param string $origin The repository remote origin.
-     *
-     * @param string $hostname The hostname of GitHub service.
-     *
-     * @param string $user   The API username.
-     *
-     * @param string $token  The API secret token.
-     */
-    public function __construct($origin, $hostname, $user, $token)
+    public function __construct(string $origin, string $hostname, string $user, string $token)
     {
         // @see https://developer.github.com/v3/enterprise
         if (strpos($hostname, 'github.com') === false) {
@@ -38,14 +20,7 @@ class Github extends AbstractApi
         $this->setRepoNameFromOrigin($origin);
     }
 
-    /**
-     *
-     * Returns a list of open issues from the API.
-     *
-     * @return array
-     *
-     */
-    public function issues()
+    public function issues() : array
     {
         $issues = [];
 
@@ -68,16 +43,7 @@ class Github extends AbstractApi
         return $issues;
     }
 
-    /**
-     *
-     * Submits a release to the API.
-     *
-     * @param RepoInterface $repo The repository.
-     *
-     * @param string $version The version number to release.
-     *
-     */
-    public function release(RepoInterface $repo, $version)
+    public function release(RepoInterface $repo, string $version)
     {
         $prerelease = substr($version, 0, 2) == '0.'
             || strpos($version, 'dev') !== false

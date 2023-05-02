@@ -3,46 +3,17 @@ declare(strict_types=1);
 
 namespace Producer\Api;
 
+use Producer\Api;
 use Producer\Exception;
 use Producer\Repo\RepoInterface;
 
-/**
- *
- * The GitLab API.
- *
- * @package producer/producer
- *
- */
-class Gitlab extends AbstractApi
+class Gitlab extends Api
 {
-    /**
-     *
-     * The secret token.
-     *
-     * @var string
-     *
-     */
-    protected $token;
+    protected string $token;
 
-    /**
-     *
-     * The configured hostname for Gitlab
-     *
-     * @var string
-     *
-     */
-    protected $hostname;
+    protected string $hostname;
 
-    /**
-     *
-     * Constructor.
-     *
-     * @param string $origin The repository remote origin.
-     *
-     * @param string $hostname
-     * @param string $token  The API secret token.
-     */
-    public function __construct($origin, $hostname, $token)
+    public function __construct(string $origin, string $hostname, string $token)
     {
         $this->setHttp("https://{$hostname}/api/v3");
         $this->token = $token;
@@ -50,31 +21,13 @@ class Gitlab extends AbstractApi
         $this->setRepoNameFromOrigin($origin);
     }
 
-    /**
-     *
-     * Modifies query params to add a page and other API-specific params.
-     *
-     * @param array $query The query params.
-     *
-     * @param int $page The page number, if any.
-     *
-     * @return array
-     *
-     */
-    protected function httpQuery(array $query, $page = 0)
+    protected function httpQuery(array $query, int $page = 0)
     {
         $query['private_token'] = $this->token;
         return parent::httpQuery($query, $page);
     }
 
-    /**
-     *
-     * Returns a list of open issues from the API.
-     *
-     * @return array
-     *
-     */
-    public function issues()
+    public function issues() : array
     {
         $issues = [];
 
@@ -97,15 +50,6 @@ class Gitlab extends AbstractApi
         return $issues;
     }
 
-    /**
-     *
-     * Submits a release to the API.
-     *
-     * @param RepoInterface $repo The repository.
-     *
-     * @param string $version The version number to release.
-     *
-     */
     public function release(RepoInterface $repo, $version)
     {
         $query = [];

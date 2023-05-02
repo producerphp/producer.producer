@@ -5,8 +5,8 @@ namespace Producer;
 
 use AutoShell\Console;
 use Caplet\Caplet;
+use Producer\Api;
 use Producer\Api\ApiFactory;
-use Producer\Api\ApiInterface;
 use Producer\Fsio\HomeFsio;
 use Producer\Fsio\RepoFsio;
 use Producer\Repo\RepoFactory;
@@ -45,8 +45,8 @@ class ProducerContainer extends Caplet
         );
 
         $this->factory(
-            ApiInterface::class,
-            fn (Caplet $caplet) : ApiInterface => $caplet->get(ApiFactory::class)->new()
+            Api::class,
+            fn (Caplet $caplet) : Api => $caplet->get(ApiFactory::class)->new()
         );
 
         $this->factory(

@@ -3,44 +3,18 @@ declare(strict_types=1);
 
 namespace Producer\Api;
 
+use Producer\Api;
 use Producer\Exception;
 use Producer\Repo\RepoInterface;
 
-/**
- *
- * The BitBucket API.
- *
- * @package producer/producer
- *
- */
-class Bitbucket extends AbstractApi
+class Bitbucket extends Api
 {
-    /**
-     *
-     * Constructor.
-     *
-     * @param string $origin The repository remote origin.
-     *
-     * @param string $hostname The hostname of Bitbucket service.
-     *
-     * @param string $user The API username.
-     *
-     * @param string $pass The API password.
-     *
-     */
-    public function __construct($origin, $hostname, $user, $pass)
+    public function __construct(string $origin, string $hostname, string $user, string $pass)
     {
         $this->setHttp("https://{$user}:{$pass}@{$hostname}/2.0");
         $this->setRepoNameFromOrigin($origin);
     }
 
-    /**
-     *
-     * Sets the repo name based on the origin.
-     *
-     * @param string $origin The repo origin.
-     *
-     */
     protected function setRepoNameFromOrigin($origin)
     {
         $repoName = parse_url($origin, PHP_URL_PATH);
@@ -48,28 +22,12 @@ class Bitbucket extends AbstractApi
         $this->repoName = trim($repoName, '/');
     }
 
-    /**
-     *
-     * Extracts the value elements from the API JSON result.
-     *
-     * @param mixed $json The API JSON result.
-     *
-     * @return mixed
-     *
-     */
     protected function httpValues($json)
     {
         return $json->values;
     }
 
-    /**
-     *
-     * Returns a list of open issues from the API.
-     *
-     * @return array
-     *
-     */
-    public function issues()
+    public function issues() : array
     {
         $issues = [];
 
@@ -90,16 +48,6 @@ class Bitbucket extends AbstractApi
 
         return $issues;
     }
-
-    /**
-     *
-     * Submits a release to the API.
-     *
-     * @param RepoInterface $repo The repository.
-     *
-     * @param string $version The version number to release.
-     *
-     */
     public function release(RepoInterface $repo, $version)
     {
         $repo->tag($version, "Released $version");
