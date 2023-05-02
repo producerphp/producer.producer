@@ -4,10 +4,12 @@ declare(strict_types=1);
 namespace Producer\Command;
 
 use AutoShell\Help;
+use AutoShell\Option;
 use AutoShell\Options;
 use Producer\Command;
 
-#[Help("Validate the repository for a <version> release.")]
+#[Help("Validate, and optionally release, the repository as _version_.")]
+#[Option('release', help: "Release the package after validation.")]
 class Validate extends Command
 {
     /**
@@ -31,11 +33,15 @@ class Validate extends Command
     public function __invoke(
         Options $options,
 
-        #[Help("The version to release.")]
+        #[Help("Validate at this version.")]
         string $version
 
     ) : int
     {
+        if ($options->release) {
+            $this->logger->warning("THIS WILL RELEASE THE PACKAGE.");
+        }
+
         $this->setVersion($version);
 
         $this->repo->sync();
@@ -51,6 +57,13 @@ class Validate extends Command
         $this->repo->checkChanges();
         $this->checkIssues();
         $this->logger->info("{$this->package} {$this->version} appears valid for release!");
+
+        if ($options->release) {
+            $this->logger->info("Releasing $this->package $this->version");
+            $this->api->release($this->repo, $this->version);
+            $this->logger->info("Released $this->package $this->version !");
+        }
+
         return 0;
     }
 
