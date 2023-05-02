@@ -3,30 +3,47 @@ declare(strict_types=1);
 
 namespace Producer;
 
+use Producer\Fsio\HomeFsio;
+use Producer\Fsio\RepoFsio;
+
 class ConfigTest extends \PHPUnit\Framework\TestCase
 {
-    protected function mockFsio(array $returnData, $isFile = true)
+    protected function mockHomeFsio(array $returnData, $isFile = true)
     {
-        $fsio = $this->createMock(Fsio::class);
+        $homefs = $this->createMock(HomeFsio::class);
 
-        $fsio->expects($this->any())
+        $homefs->expects($this->any())
             ->method('isFile')->will($this->returnValue($isFile));
 
-        $fsio->expects($this->any())
+        $homefs->expects($this->any())
             ->method('parseIni')->will($this->returnValue($returnData));
 
-        return $fsio;
+        return $homefs;
+    }
+
+    protected function mockRepoFsio(array $returnData, $isFile = true)
+    {
+        $repofs = $this->createMock(RepoFsio::class);
+
+        $repofs->expects($this->any())
+            ->method('isFile')->will($this->returnValue($isFile));
+
+        $repofs->expects($this->any())
+            ->method('parseIni')->will($this->returnValue($returnData));
+
+        return $repofs;
     }
 
     public function testLoadHomeConfig() : void
     {
-        $homefs = $this->mockFsio([
+        $homefs = $this->mockHomeFsio([
             'gitlab_token' => 'foobarbazdibzimgir',
             'commands' => [
                 'phpunit' => '/path/to/phpunit',
             ]
         ]);
-        $repofs = $this->mockFsio([], false);
+
+        $repofs = $this->mockRepoFsio([], false);
 
         $config = new Config($homefs, $repofs);
 
@@ -60,12 +77,13 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     public function testGitHubHostOverride() : void
     {
-        $homefs = $this->mockFsio([
+        $homefs = $this->mockHomeFsio([
             'github_hostname' => 'example.org',
             'github_username' => 'foo',
             'github_token' => 'bar',
         ]);
-        $repofs = $this->mockFsio([], false);
+
+        $repofs = $this->mockRepoFsio([], false);
 
         $config = new Config($homefs, $repofs);
 
@@ -99,11 +117,12 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     public function testGitlabHostOverride() : void
     {
-        $homefs = $this->mockFsio([
+        $homefs = $this->mockHomeFsio([
             'gitlab_hostname' => 'example.org',
             'gitlab_token' => 'bar',
         ]);
-        $repofs = $this->mockFsio([], false);
+
+        $repofs = $this->mockRepoFsio([], false);
 
         $config = new Config($homefs, $repofs);
 
@@ -137,8 +156,9 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     public function testLoadHomeAndRepoConfig() : void
     {
-        $homefs = $this->mockFsio(['gitlab_token' => 'foobarbazdibzimgir']);
-        $repofs = $this->mockFsio([
+        $homefs = $this->mockHomeFsio(['gitlab_token' => 'foobarbazdibzimgir']);
+
+        $repofs = $this->mockRepoFsio([
             'package' => 'Foo.Bar',
             'commands' => [
                 'phpunit' => './vendor/bin/phpunit'

@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace Producer;
 
+use Producer\Fsio\HomeFsio;
+use Producer\Fsio\RepoFsio;
+
 /**
  *
  * Producer configuration values.
@@ -62,7 +65,7 @@ class Config
      * @throws Exception
      *
      */
-    public function __construct(Fsio $homefs, Fsio $repofs)
+    public function __construct(HomeFsio $homefs, RepoFsio $repofs)
     {
         $this->loadHomeConfig($homefs);
         $this->loadRepoConfig($repofs);
@@ -77,7 +80,7 @@ class Config
      * @throws Exception
      *
      */
-    protected function loadHomeConfig(Fsio $homefs)
+    protected function loadHomeConfig(HomeFsio $homefs)
     {
         if (! $homefs->isFile($this->configFile)) {
             $path = $homefs->path($this->configFile);
@@ -97,7 +100,7 @@ class Config
      * @throws Exception
      *
      */
-    public function loadRepoConfig(Fsio $repofs)
+    public function loadRepoConfig(RepoFsio $repofs)
     {
         if (! $repofs->isFile($this->configFile)) {
             return;

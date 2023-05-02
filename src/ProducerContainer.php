@@ -95,44 +95,14 @@ class ProducerContainer
             throw new Exception("Command '$name' not found.");
         }
 
-        $homefs = $this->newFsio($this->homedir);
-        $repofs = $this->newFsio($this->repodir);
-        $config = $this->newConfig($homefs, $repofs);
+        $homefs = new HomeFsio($this->homedir);
+        $repofs = new RepoFsio($this->repodir);
+        $config = new Config($homefs, $repofs);
 
         $repo = $this->newRepo($repofs, $config);
         $api = $this->newApi($repo->getOrigin(), $config);
 
         return new $class($this->logger, $repo, $api, $config);
-    }
-
-    /**
-     *
-     * Returns a new filesystem I/O object.
-     *
-     * @param string $dir The root directory for the filesystem.
-     *
-     * @return Fsio
-     *
-     */
-    protected function newFsio($root)
-    {
-        return new Fsio($root);
-    }
-
-    /**
-     *
-     * Returns a new Config object.
-     *
-     * @param Fsio $homefs
-     *
-     * @param Fsio $repofs
-     *
-     * @return Config
-     *
-     */
-    protected function newConfig(Fsio $homefs, Fsio $repofs)
-    {
-        return new Config($homefs, $repofs);
     }
 
     /**

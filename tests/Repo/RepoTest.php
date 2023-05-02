@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Producer\Repo;
 
 use Producer\Config;
-use Producer\Fsio;
+use Producer\Fsio\RepoFsio;
 use Producer\Stdlog;
 
 class FakeRepo extends AbstractRepo
@@ -37,15 +37,15 @@ class FakeRepo extends AbstractRepo
 
 class RepoTest extends \PHPUnit\Framework\TestCase
 {
-    protected function mockFsio($text)
+    protected function mockRepoFsio($text)
     {
-        $fsio = $this->createMock(Fsio::class);
+        $repofs = $this->createMock(RepoFsio::class);
 
-        $fsio->expects($this->any())
+        $repofs->expects($this->any())
             ->method('get')
             ->will($this->returnValue($text));
 
-        return $fsio;
+        return $repofs;
     }
 
     protected function mockConfig(array $files)
@@ -61,12 +61,12 @@ class RepoTest extends \PHPUnit\Framework\TestCase
 
     public function testGetChanges() : void
     {
-        $fsio = $this->mockFsio($this->changelog);
+        $repofs = $this->mockRepoFsio($this->changelog);
         $logger = new Stdlog(STDOUT, STDERR);
         $config = $this->mockConfig([
             'changes' => 'CHANGES.md',
         ]);
-        $repo = new FakeRepo($fsio, $logger, $config);
+        $repo = new FakeRepo($repofs, $logger, $config);
         $actual = $repo->getChanges();
         $expect = $this->changelog;
         $this->assertSame($expect, $actual);
@@ -74,7 +74,7 @@ class RepoTest extends \PHPUnit\Framework\TestCase
         $config = $this->mockConfig([
             'changes' => 'CHANGELOG.md',
         ]);
-        $repo = new FakeRepo($fsio, $logger, $config);
+        $repo = new FakeRepo($repofs, $logger, $config);
         $actual = $repo->getChanges();
         $expect = trim($this->subset);
         $this->assertSame($expect, $actual);

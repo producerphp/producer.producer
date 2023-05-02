@@ -5,7 +5,7 @@ namespace Producer\Repo;
 
 use Producer\Config;
 use Producer\Exception;
-use Producer\Fsio;
+use Producer\Fsio\RepoFsio;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -73,7 +73,7 @@ abstract class AbstractRepo implements RepoInterface
      * @param Config $config
      *
      */
-    public function __construct(Fsio $fsio, LoggerInterface $logger, Config $config)
+    public function __construct(RepoFsio $fsio, LoggerInterface $logger, Config $config)
     {
         $this->fsio = $fsio;
         $this->logger = $logger;
