@@ -90,16 +90,19 @@ abstract class Repo
             throw new Exception("There is more than one {$file} file.");
         }
 
+        $file = (string) array_pop($files);
+
         if (trim($this->repofs->get($file)) === '') {
             throw new Exception("The file {$file} is empty.");
         }
 
-        return (string) array_pop($files);
+        return $file;
     }
 
     public function checkLicenseYear() : void
     {
-        $license = $this->repofs->get($this->checkSkeletonFile('LICENSE'));
+        $file = $this->checkSkeletonFile('LICENSE');
+        $license = $this->repofs->get($file);
         $year = date('Y');
 
         if (strpos($license, $year) === false) {
