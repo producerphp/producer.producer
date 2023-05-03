@@ -18,17 +18,11 @@ abstract class Repo
 
     protected ?stdClass $composer = null;
 
-    protected RepoFsio $fsio;
-
-    protected LoggerInterface $logger;
-
-    protected Config $config;
-
-    public function __construct(RepoFsio $fsio, LoggerInterface $logger, Config $config)
-    {
-        $this->fsio = $fsio;
-        $this->logger = $logger;
-        $this->config = $config;
+    public function __construct(
+        protected RepoFsio $repofs,
+        protected LoggerInterface $logger,
+        protected Config $config
+    ) {
         $this->setOrigin();
     }
 
@@ -73,7 +67,7 @@ abstract class Repo
     public function getComposer() : stdClass
     {
         if (! $this->composer) {
-            $this->composer = (object) json_decode($this->fsio->get('composer.json'));
+            $this->composer = (object) json_decode($this->repofs->get('composer.json'));
         }
 
         return $this->composer;
@@ -89,8 +83,8 @@ abstract class Repo
     protected function checkSkeletonFile(string $file) : string
     {
         $files = array_merge(
-            $this->fsio->glob($file, GLOB_MARK),
-            $this->fsio->glob("{$file}.*", GLOB_MARK)
+            $this->repofs->glob($file, GLOB_MARK),
+            $this->repofs->glob("{$file}.*", GLOB_MARK)
         );
 
         if (count($files) < 1) {
@@ -101,7 +95,7 @@ abstract class Repo
             throw new Exception("There is more than one {$file} file.");
         }
 
-        if (trim($this->fsio->get($file)) === '') {
+        if (trim($this->repofs->get($file)) === '') {
             throw new Exception("The file {$file} is empty.");
         }
 
@@ -110,7 +104,7 @@ abstract class Repo
 
     public function checkLicenseYear() : void
     {
-        $license = $this->fsio->get($this->checkSkeletonFile('LICENSE'));
+        $license = $this->repofs->get($this->checkSkeletonFile('LICENSE'));
         $year = date('Y');
 
         if (strpos($license, $year) === false) {
@@ -133,7 +127,7 @@ abstract class Repo
     public function getChanges() : string
     {
         $file = $this->checkSkeletonFile('CHANGELOG');
-        $text = $this->fsio->get($file);
+        $text = $this->repofs->get($file);
 
         preg_match('/(\n\#\# .*\n)(.*)(\n\#\# )/Ums', $text, $matches);
 
@@ -168,7 +162,7 @@ abstract class Repo
     public function checkChangelogVersion(string $version) : void
     {
         $file = $this->checkSkeletonFile('CHANGELOG');
-        $changelog = $this->fsio->get($file);
+        $changelog = $this->repofs->get($file);
 
         $quotedVersion = preg_quote($version);
         $found = preg_match('/^\W*{$quotedVersion}[\s\t\r\n]/Umsi', $changelog, $matches);

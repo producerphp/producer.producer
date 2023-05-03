@@ -11,7 +11,7 @@ class Hg extends Repo
     protected function setOrigin() : void
     {
         /** @var array{'paths': ?array{'default': ?string}} */
-        $data = $this->fsio->parseIni('.hg/hgrc', true);
+        $data = $this->repofs->parseIni('.hg/hgrc', true);
 
         if (! isset($data['paths']['default'])) {
             throw new Exception('Could not determine default path.');

@@ -11,7 +11,7 @@ class Git extends Repo
     protected function setOrigin() : void
     {
         /** @var array{'remote origin': ?array{'url': ?string}} */
-        $data = $this->fsio->parseIni('.git/config', true);
+        $data = $this->repofs->parseIni('.git/config', true);
 
         if (! isset($data['remote origin']['url'])) {
             throw new Exception('Could not determine remote origin.');
