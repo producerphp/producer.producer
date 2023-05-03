@@ -39,28 +39,30 @@ abstract class Repo
     }
 
     /**
-     * @param string[] &$output
+     * @return object{output:string[], last:string, error:int}
      */
-    protected function shell(string $cmd, array &$output = [], int &$return = null) : string
+    protected function shell(string $command) : object
     {
-        $cmd = str_replace('; ', ';\\' . PHP_EOL, $cmd);
-        $this->logger->debug("> $cmd");
-        $output = null;
-        $last = exec($cmd, $output, $return);
+        $this->logger->debug("> $command");
+        $last = exec($command, $output, $error);
 
         foreach ($output as $line) {
             $this->logger->debug("< $line");
         }
 
-        return (string) $last;
+        return (object) [
+            'output' => $output,
+            'last' => (string) $last,
+            'error' => $error,
+        ];
     }
 
     public function checkComposer() : void
     {
-        $last = $this->shell('composer validate', $output, $return);
+        $shell = $this->shell('composer validate');
 
-        if ($return) {
-            throw new Exception($last);
+        if ($shell->error) {
+            throw new Exception($shell->last);
         }
     }
 
@@ -120,10 +122,10 @@ abstract class Repo
             throw new Exception('The quality_command configuration value is empty.');
         }
 
-        $last = $this->shell($command, $output, $return);
+        $shell = $this->shell($command);
 
-        if ($return) {
-            throw new Exception($last);
+        if ($shell->error) {
+            throw new Exception($shell->last);
         }
     }
 
