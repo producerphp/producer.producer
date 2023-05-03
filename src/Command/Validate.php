@@ -28,7 +28,7 @@ class Validate extends Command
         $this->assertValidVersion($version);
 
         $this->repo->sync();
-        $this->repo->validateComposer();
+        $this->repo->checkComposer();
 
         $package = $this->repo->getPackage();
         $this->logger->info("Validating {$package} {$version}");

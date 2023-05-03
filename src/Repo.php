@@ -55,7 +55,7 @@ abstract class Repo
         return (string) $last;
     }
 
-    public function validateComposer() : void
+    public function checkComposer() : void
     {
         $last = $this->shell('composer validate', $output, $return);
 
@@ -114,14 +114,17 @@ abstract class Repo
 
     public function checkQuality() : void
     {
-        $command = 'composer check';
+        $command = $this->config->get('quality_command') ?? 'composer check';
+
+        if (! $command) {
+            throw new Exception('The quality_command configuration value is empty.');
+        }
+
         $last = $this->shell($command, $output, $return);
 
         if ($return) {
             throw new Exception($last);
         }
-
-        $this->checkStatus();
     }
 
     public function getChanges() : string
