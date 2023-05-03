@@ -5,6 +5,7 @@ namespace Producer;
 
 use stdClass;
 use Generator;
+use Psr\Log\LoggerInterface;
 
 abstract class Api
 {
@@ -88,5 +89,5 @@ abstract class Api
      */
     abstract public function issues() : array;
 
-    abstract public function release(Repo $repo, string $version) : void;
+    abstract public function release(Repo $repo, LoggerInterface $logger, string $version) : void;
 }

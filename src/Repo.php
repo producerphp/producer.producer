@@ -75,13 +75,6 @@ abstract class Repo
         return $this->composer;
     }
 
-    public function checkSkeletonFiles() : void
-    {
-        foreach (static::SKELETON_FILES as $name) {
-            $this->checkSkeletonFile($name);
-        }
-    }
-
     protected function checkSkeletonFile(string $file) : string
     {
         $files = array_merge(

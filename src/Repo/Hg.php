@@ -46,8 +46,6 @@ class Hg extends Repo
         if ($shell->error > 1) {
             throw new Exception('Push failed.');
         }
-
-        $this->checkStatus();
     }
 
     public function checkStatus() : void

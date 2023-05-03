@@ -6,6 +6,7 @@ namespace Producer\Api;
 use Producer\Api;
 use Producer\Exception;
 use Producer\Repo;
+use Psr\Log\LoggerInterface;
 use stdClass;
 
 class Bitbucket extends Api
@@ -54,9 +55,10 @@ class Bitbucket extends Api
         return $issues;
     }
 
-    public function release(Repo $repo, string $version) : void
+    public function release(Repo $repo, LoggerInterface $logger, string $version) : void
     {
-        $repo->tag($version, "Released $version");
-        $repo->sync();
+        $logger->info("Tagging release {$version} locally.");
+        $repo->tag($version, "Released {$version}");
+        $logger->info("Tagged!");
     }
 }

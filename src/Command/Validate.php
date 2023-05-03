@@ -21,32 +21,34 @@ class Validate extends Command
 
     ) : int
     {
+        $this->assertValidVersion($version);
+
         if ($options['release']) {
             $this->logger->warning("THIS WILL RELEASE THE PACKAGE.");
         }
 
-        $this->assertValidVersion($version);
-
-        $this->repo->sync();
         $this->repo->checkComposer();
-
         $package = $this->repo->getPackage();
+
         $this->logger->info("Validating {$package} {$version}");
 
-        $this->repo->checkSkeletonFiles();
-        $this->repo->checkLicenseYear();
+        $this->repo->sync();
+        $this->repo->checkStatus();
+
         $this->repo->checkQuality();
         $this->repo->checkStatus();
+
+        $this->repo->checkLicenseYear();
         $this->repo->checkChangelogDate();
         $this->repo->checkChangelogVersion($version);
         $this->checkIssues();
 
-        $this->logger->info("{$package} {$version} appears valid for release!");
+        $this->logger->info("{$package} {$version} appears valid!");
 
         if ($options['release']) {
-            $this->logger->info("Releasing $package $version");
-            $this->api->release($this->repo, $version);
-            $this->logger->info("Released $package $version !");
+            $this->api->release($this->repo, $this->logger, $version);
+            $this->repo->sync();
+            $this->repo->checkStatus();
         }
 
         return 0;

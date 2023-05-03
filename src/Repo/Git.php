@@ -44,8 +44,6 @@ class Git extends Repo
         if ($shell->error) {
             throw new Exception('Push failed.');
         }
-
-        $this->checkStatus();
     }
 
     public function checkStatus() : void

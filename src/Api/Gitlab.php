@@ -6,6 +6,7 @@ namespace Producer\Api;
 use Producer\Api;
 use Producer\Exception;
 use Producer\Repo;
+use Psr\Log\LoggerInterface;
 
 class Gitlab extends Api
 {
@@ -57,8 +58,10 @@ class Gitlab extends Api
         return $issues;
     }
 
-    public function release(Repo $repo, string $version) : void
+    public function release(Repo $repo, LoggerInterface $logger, string $version) : void
     {
+        $logger->info("Releasing {$version} remotely.");
+
         $query = [];
 
         $data = [
@@ -80,6 +83,6 @@ class Gitlab extends Api
             throw new Exception($message);
         }
 
-        $repo->sync();
+        $logger->info("Released.");
     }
 }

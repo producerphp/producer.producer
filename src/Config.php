@@ -36,6 +36,12 @@ class Config
     {
         $this->loadHomeConfig($homefs);
         $this->loadRepoConfig($repofs);
+
+        foreach ($this->data as $key => $val) {
+            if (trim((string) $val) === '') {
+                $this->data[$key] = null;
+            }
+        }
     }
 
     protected function loadHomeConfig(HomeFsio $homefs) : void

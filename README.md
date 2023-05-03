@@ -1,19 +1,15 @@
 # Producer
 
-Producer is a command-line quality-assurance tool to validate, and then release,
-your PHP library package. It supports Git and Mercurial for version control, as
-well as Github, Gitlab, and Bitbucket for remote origins (including self-hosted
-origins).
+Producer is a command-line package validation and release tool.
+
+It supports Git and Mercurial for version control, as well as Github, Gitlab,
+and Bitbucket for remote origins (including self-hosted origins).
 
 ## Installing
 
-Producer works in concert with [Composer][], [PHPUnit][], and [PHPDocumentor][].
-Please install them first, either as part of your global system, or as part of
-your package.
+Producer works in concert with [Composer][]. Please install it first.
 
 [Composer]: https://getcomposer.org
-[PHPUnit]: https://packagist.org/packages/phpunit/phpunit
-[PHPDocumentor]: https://packagist.org/packages/phpdocumentor/phpdocumentor
 
 ### Global Install
 
@@ -25,16 +21,13 @@ Be sure to add `$COMPOSER_HOME/vendor/bin` to your `$PATH`;
 Test the installation by issuing `producer` at the command line to see some
 "help" output.
 
-> Remember, you will need [PHPUnit][] and [PHPDocumentor][] as well.
-
 ### Package Install
 
-To install the Producer package as a development requirement for your package issue `composer require --dev producer/producer`.
+To install the Producer package as a development requirement for your package,
+issue `composer require --dev producer/producer`.
 
 Test the installation by issuing `./vendor/bin/producer` at the command line to
 see some "help" output.
-
-> Remember, you will need [PHPUnit][] and [PHPDocumentor][] as well.
 
 ## Configuring
 
@@ -47,13 +40,21 @@ mkdir ~/.producer
 echo "; Github
 github_username =
 github_token =
+github_hostname =
 
 ; Gitlab
 gitlab_token =
+gitlab_hostname =
 
 ; Bitbucket
 bitbucket_username =
-bitbucket_password =" > ~/.producer/config
+bitbucket_password =
+bitbucket_hostname =
+
+; Quality
+quality_command =
+
+" > ~/.producer/config
 ```
 
 You can then edit `~/.producer/config` to enter your access credentials, any or
@@ -72,7 +73,7 @@ all of:
 ### Package Configuration
 
 Inside your package repository, you may define a `.producer/config` file that
-sets any of the following options for that specific package.
+sets any of the configuration values for that specific package.
 
 ```ini
 ; custom hostnames for self-hosted origins
@@ -80,24 +81,9 @@ github_hostname = example.com
 gitlab_hostname = example.net
 bitbucket_hostname = example.org
 
-; commands to use for phpunit and phpdoc
-[commands]
-phpunit = /path/to/phpunit
-phpdoc = /path/to/phpdoc
-
-; names for support files
-[files]
-changes = CHANGES.md
-contributing = CONTRIBUTING.md
-license = LICENSE.md
-phpunit = phpunit.xml.dist
-readme = README.md
+; commands to use for quality checks
+quality_command = composer check
 ```
-
-> **Testing Systems**: If you want to use a testing system other than PHPUnit,
-> you can set `phpunit = /whatever/you/want`. As long as it exits non-zero when
-> the tests fail, Producer will work with it properly. Yes, it was short-sighted
-> to name the key `phpunit`; a future release of Producer may remedy that.
 
 ## Getting Started
 
@@ -108,8 +94,8 @@ commands:
 - `producer issues` will show all the open issues from the remote origin
 - `producer validate <version>` will validate the package for release, but won't
    actually release it
-- `producer release <version>` will validate, and then actually release, the
-  package
+- `producer validate <version> --release` will validate, and then actually
+  release, the package
 
 > NOTE: Producer reads the `.git` or `.hg` configuration data from the
 > repository, so it knows whether you are using Github, Gitlab, or Bitbucket
@@ -119,14 +105,16 @@ commands:
 
 When you validate the library package, Producer will:
 
-- Sync with the remote origin (i.e., pull from the remote origin, then push any
-  local changes, then check the local status to make sure everything is
-  committed and pushed)
 - Validate the composer.json file
-- Check for informational files (see below) and for a `phpunit.xml.dist` file
-- Check that the license file has the current year in it
-- Call `composer update`, run the unit tests, and make sure they cleaned up after
-- Check that the changes file is in the most-recent commit to the repository
+- Sync with the remote origin
+    - Pull from the remote origin
+    - Push any local changes to the remote origin
+- Check that the local repository status is clean
+- Run the quality command (typically `composer check`)
+- Check that the local repository status is still clean
+- Check that a LICENSE file exists and has the current year in it
+- Check that a CHANGELOG file exists and is in the most-recent commit to the repository
+- Check that a CHANGELOG file has a heading for the version being validated
 
 If any of those fails, then the package is not considered valid for release.
 
@@ -134,25 +122,12 @@ In addition, the `validate` command will show any open issues from the remote
 origin, but these are presented only as a reminder, and will not be considered
 invalidators.
 
-### Informational Files
-
-Producer wants you to have these informational files in the package root:
-
-- `CHANGES.md`, a list of changes for the release;
-- `CONTRIBUTING.md`, describing how to contribute to the library;
-- `LICENSE.md`, the package licensing text; and,
-- `README.md`, an introduction to the library.
-
-You may override these file names by setting the appropriate `.producer/config`
-directives.
-
 ## Releasing
 
-When you `release` the package, Producer will first `validate` it as a pre-flight step.
-
-Then it will use the Github or Gitlab API to create a release. In the case of
-Bitbucket (which does not have an API for releases) it will tag the repository
+When you `--release` the package as part of validation, Producer it will use
+the Github or Gitlab API to create a release. In the case of Bitbucket
+(which does not have an API for releases) it will tag the repository
 locally.
 
-Finally, Producer will sync with the remote origin so that the release is
-represented locally, and/or pushed to the remote.
+Afterwards, Producer will sync with the remote origin so that the release tag
+is represented locally, and/or pushed to the remote.
