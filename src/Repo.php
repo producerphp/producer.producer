@@ -41,7 +41,7 @@ abstract class Repo
     /**
      * @return object{output:string[], last:string, error:int}
      */
-    protected function shell(string $command) : object
+    protected function exec(string $command) : object
     {
         $this->logger->debug("> $command");
         $last = exec($command, $output, $error);
@@ -59,10 +59,10 @@ abstract class Repo
 
     public function checkComposer() : void
     {
-        $shell = $this->shell('composer validate');
+        $exec = $this->exec('composer validate');
 
-        if ($shell->error) {
-            throw new Exception($shell->last);
+        if ($exec->error) {
+            throw new Exception($exec->last);
         }
     }
 
@@ -115,10 +115,10 @@ abstract class Repo
             throw new Exception('The quality_command configuration value is empty.');
         }
 
-        $shell = $this->shell($command);
+        $exec = $this->exec($command);
 
-        if ($shell->error) {
-            throw new Exception($shell->last);
+        if ($exec->error) {
+            throw new Exception($exec->last);
         }
     }
 

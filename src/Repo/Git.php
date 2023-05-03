@@ -22,35 +22,35 @@ class Git extends Repo
 
     public function getBranch() : string
     {
-        $shell = $this->shell('git rev-parse --abbrev-ref HEAD');
+        $exec = $this->exec('git rev-parse --abbrev-ref HEAD');
 
-        if ($shell->error) {
-            throw new Exception(implode(PHP_EOL, $shell->output), $shell->error);
+        if ($exec->error) {
+            throw new Exception(implode(PHP_EOL, $exec->output), $exec->error);
         }
 
-        return trim($shell->last);
+        return trim($exec->last);
     }
 
     public function sync() : void
     {
-        $shell = $this->shell('git pull');
+        $exec = $this->exec('git pull');
 
-        if ($shell->error) {
+        if ($exec->error) {
             throw new Exception('Pull failed.');
         }
 
-        $shell = $this->shell('git push');
+        $exec = $this->exec('git push');
 
-        if ($shell->error) {
+        if ($exec->error) {
             throw new Exception('Push failed.');
         }
     }
 
     public function checkStatus() : void
     {
-        $shell = $this->shell('git status --porcelain');
+        $exec = $this->exec('git status --porcelain');
 
-        if ($shell->error || $shell->output) {
+        if ($exec->error || $exec->output) {
             throw new Exception('Status failed.');
         }
     }
@@ -58,14 +58,14 @@ class Git extends Repo
     public function getChangelogDate() : string
     {
         $file = $this->checkSkeletonFile('CHANGELOG');
-        $shell = $this->shell("git log -1 {$file}");
-        return $this->findDate($shell->output);
+        $exec = $this->exec("git log -1 {$file}");
+        return $this->findDate($exec->output);
     }
 
     public function getLastCommitDate() : string
     {
-        $shell = $this->shell("git log -1");
-        return $this->findDate($shell->output);
+        $exec = $this->exec("git log -1");
+        return $this->findDate($exec->output);
     }
 
     /**
@@ -88,18 +88,18 @@ class Git extends Repo
     public function logSinceDate(string $date) : array
     {
         $date = escapeshellarg($date);
-        $shell = $this->shell("git log --name-only --since={$date} --reverse");
-        return $shell->output;
+        $exec = $this->exec("git log --name-only --since={$date} --reverse");
+        return $exec->output;
     }
 
     public function tag(string $version, string $message) : void
     {
         $version = escapeshellarg($version);
         $message = escapeshellarg($message);
-        $shell = $this->shell("git tag -a {$version} --message={$message}");
+        $exec = $this->exec("git tag -a {$version} --message={$message}");
 
-        if ($shell->error) {
-            throw new Exception($shell->last);
+        if ($exec->error) {
+            throw new Exception($exec->last);
         }
     }
 }
