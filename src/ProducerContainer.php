@@ -42,8 +42,8 @@ class ProducerContainer extends Caplet
         $this->factory(
             Console::class,
             fn (Caplet $caplet) : Console => Console::new(
-                namespace: 'Producer\Command',
-                directory: __DIR__ . '/Command/',
+                namespace: 'Producer\Sapi\Cli\Command',
+                directory: __DIR__ . '/Sapi/Cli/Command/',
                 factory: [$caplet, 'get'],
                 header: "Producer 2.0.0 by Paul M. Jones and contributors." . PHP_EOL . PHP_EOL,
             )

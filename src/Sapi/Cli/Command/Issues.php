@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Producer\Command;
+namespace Producer\Sapi\Cli\Command;
 
 use AutoShell\Help;
 use AutoShell\Options;

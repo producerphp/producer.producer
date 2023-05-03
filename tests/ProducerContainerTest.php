@@ -14,6 +14,9 @@ class ProducerContainerTest extends \PHPUnit\Framework\TestCase
             STDERR
         );
 
-        $this->assertInstanceOf(Command\Validate::class, $container->new(Command\Validate::class));
+        $this->assertInstanceOf(
+            Sapi\Cli\Command\Validate::class,
+            $container->new(Sapi\Cli\Command\Validate::class)
+        );
     }
 }
