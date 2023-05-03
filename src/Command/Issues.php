@@ -5,28 +5,19 @@ namespace Producer\Command;
 
 use AutoShell\Help;
 use AutoShell\Options;
-use Producer\Command;
+use Producer\App\IssuesService;
 
 #[Help("Show open issues from the remote origin.")]
-class Issues extends Command
+class Issues
 {
+    public function __construct(
+        protected IssuesService $issuesService
+    ) {
+    }
+
     public function __invoke(Options $options) : int
     {
-        $issues = $this->api->issues();
-
-        if (empty($issues)) {
-            return 0;
-        }
-
-        $this->logger->info($this->api->getRepoName());
-        $this->logger->info('');
-
-        foreach ($issues as $issue) {
-            $this->logger->info("    {$issue->number}. {$issue->title}");
-            $this->logger->info("        {$issue->url}");
-            $this->logger->info('');
-        }
-
+        $this->issuesService->__invoke();
         return 0;
     }
 }
