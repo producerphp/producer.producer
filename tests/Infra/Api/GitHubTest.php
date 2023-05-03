@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Producer;
+namespace Producer\Infra;
 
-use Producer\Api\Github;
+use Producer\Infra\Api\Github;
 
 class GitHubTest extends \PHPUnit\Framework\TestCase
 {

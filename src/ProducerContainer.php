@@ -5,12 +5,13 @@ namespace Producer;
 
 use AutoShell\Console;
 use Caplet\Caplet;
-use Producer\Api;
-use Producer\Api\ApiFactory;
-use Producer\Fsio\HomeFsio;
-use Producer\Fsio\RepoFsio;
-use Producer\Repo\RepoFactory;
-use Producer\Repo;
+use Producer\Infra\Api;
+use Producer\Infra\Api\ApiFactory;
+use Producer\Infra\Fsio\HomeFsio;
+use Producer\Infra\Fsio\RepoFsio;
+use Producer\Infra\Repo\RepoFactory;
+use Producer\Infra\Repo;
+use Producer\Infra\Stdlog;
 use Psr\Log\LoggerInterface;
 
 class ProducerContainer extends Caplet

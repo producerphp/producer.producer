@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Producer;
+namespace Producer\Infra;
 
 use Psr\Log\LogLevel;
 use RuntimeException;

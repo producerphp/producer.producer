@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Producer\Api;
+namespace Producer\Infra\Api;
 
-use Producer\Api;
-use Producer\Config;
-use Producer\Exception;
-use Producer\Http;
-use Producer\Repo;
+use Producer\Infra\Api;
+use Producer\Infra\Config;
+use Producer\Infra\Exception;
+use Producer\Infra\Http;
+use Producer\Infra\Repo;
 
 class ApiFactory
 {

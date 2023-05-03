@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Producer;
+namespace Producer\Infra;
 
 class FsioTest extends \PHPUnit\Framework\TestCase
 {
@@ -29,7 +29,7 @@ class FsioTest extends \PHPUnit\Framework\TestCase
         $this->fsio->rmdir($dir);
         $this->assertFalse($this->fsio->isDir($dir));
 
-        $this->expectException('Producer\Exception');
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('mkdir(): File exists');
         $this->fsio->mkdir('../' . basename(__DIR__));
     }
@@ -48,14 +48,14 @@ class FsioTest extends \PHPUnit\Framework\TestCase
 
     public function testPut_error() : void
     {
-        $this->expectException('Producer\Exception');
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('No such file or directory');
         $this->fsio->put('no-such-directory/fakefile', 'fake text');
     }
 
     public function testGet_error() : void
     {
-        $this->expectException('Producer\Exception');
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('No such file or directory');
         $this->fsio->get('no-such-directory/fakefile');
     }

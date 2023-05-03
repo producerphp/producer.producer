@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Producer\Api;
+namespace Producer\Infra\Api;
 
-use Producer\Api;
-use Producer\Exception;
-use Producer\Repo;
+use Producer\Infra\Api;
+use Producer\Infra\Exception;
+use Producer\Infra\Repo;
 use Psr\Log\LoggerInterface;
 
 class Gitlab extends Api

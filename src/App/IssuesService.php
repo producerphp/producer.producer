@@ -3,15 +3,15 @@ declare(strict_types=1);
 
 namespace Producer\App;
 
-use Producer\Api;
-use Producer\Repo;
+use Producer\Infra\Api;
+use Producer\Infra\Repo;
 use Psr\Log\LoggerInterface;
 
 class IssuesService
 {
     public function __construct(
-        protected LoggerInterface $logger,
         protected Api $api,
+        protected LoggerInterface $logger,
     ) {
     }
 

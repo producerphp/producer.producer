@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Producer\Fsio;
+namespace Producer\Infra\Fsio;
 
-use Producer\Fsio;
+use Producer\Infra\Fsio;
 
 class RepoFsio extends Fsio
 {

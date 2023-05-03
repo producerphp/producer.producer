@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Producer\Repo;
+namespace Producer\Infra\Repo;
 
-use Producer\Exception;
-use Producer\Repo;
+use Producer\Infra\Exception;
+use Producer\Infra\Repo;
 
 class Hg extends Repo
 {

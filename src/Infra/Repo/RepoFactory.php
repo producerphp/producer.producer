@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Producer\Repo;
+namespace Producer\Infra\Repo;
 
-use Producer\Config;
-use Producer\Exception;
-use Producer\Fsio\RepoFsio;
-use Producer\Repo;
+use Producer\Infra\Config;
+use Producer\Infra\Exception;
+use Producer\Infra\Fsio\RepoFsio;
+use Producer\Infra\Repo;
 use Psr\Log\LoggerInterface;
 
 class RepoFactory

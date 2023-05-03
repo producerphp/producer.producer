@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Producer;
+namespace Producer\Infra;
 
-use Producer\Fsio\RepoFsio;
+use Producer\Infra\Fsio\RepoFsio;
 use Psr\Log\LoggerInterface;
 use stdClass;
 

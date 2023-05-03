@@ -3,17 +3,17 @@ declare(strict_types=1);
 
 namespace Producer\App;
 
-use Producer\Api;
-use Producer\Exception;
-use Producer\Repo;
+use Producer\Infra\Api;
+use Producer\Infra\Exception;
+use Producer\Infra\Repo;
 use Psr\Log\LoggerInterface;
 
 class ValidateService
 {
     public function __construct(
-        protected LoggerInterface $logger,
         protected Api $api,
         protected Repo $repo,
+        protected LoggerInterface $logger,
     ) {
     }
 

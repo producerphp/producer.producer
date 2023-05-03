@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Producer;
+namespace Producer\Infra;
 
-use Producer\Api\Gitlab;
+use Producer\Infra\Api\Gitlab;
 
 class GitlabTest extends \PHPUnit\Framework\TestCase
 {

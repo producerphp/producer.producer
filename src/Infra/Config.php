@@ -1,18 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Producer;
+namespace Producer\Infra;
 
-use Producer\Fsio\HomeFsio;
-use Producer\Fsio\RepoFsio;
+use Producer\Infra\Fsio\HomeFsio;
+use Producer\Infra\Fsio\RepoFsio;
 
-/**
- *
- * Producer configuration values.
- *
- * @package producer/producer
- *
- */
 class Config
 {
     /**

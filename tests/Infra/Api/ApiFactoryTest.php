@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Producer\Api;
+namespace Producer\Infra\Api;
 
-use Producer\Repo\Git;
-use Producer\Config;
+use Producer\Infra\Repo\Git;
+use Producer\Infra\Config;
 
 class ApiFactoryTest extends \PHPUnit\Framework\TestCase
 {

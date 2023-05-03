@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Producer\Repo;
+namespace Producer\Infra\Repo;
 
-use Producer\Config;
-use Producer\Fsio\RepoFsio;
-use Producer\Repo;
-use Producer\Stdlog;
+use Producer\Infra\Config;
+use Producer\Infra\Fsio\RepoFsio;
+use Producer\Infra\Repo;
+use Producer\Infra\Stdlog;
 
 class RepoTest extends \PHPUnit\Framework\TestCase
 {
