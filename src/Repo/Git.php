@@ -57,7 +57,7 @@ class Git extends Repo
         }
     }
 
-    public function getChangesDate() : string
+    public function getChangelogDate() : string
     {
         $changes = $this->checkSkeletonFile('CHANGELOG');
         $this->shell("git log -1 {$changes}", $output, $return);

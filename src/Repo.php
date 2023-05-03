@@ -144,32 +144,49 @@ abstract class Repo
         return $text;
     }
 
-    public function checkChanges() : void
+    public function checkChangelogDate() : void
     {
         $file = $this->checkSkeletonFile('CHANGELOG');
 
-        $lastChangelog = $this->getChangesDate();
-        $this->logger->info("Last changes date is $lastChangelog.");
+        $lastChangelogDate = $this->getChangelogDate();
+        $this->logger->info("Last CHANGELOG date is $lastChangelogDate.");
 
-        $lastCommit = $this->getLastCommitDate();
-        $this->logger->info("Last commit date is $lastCommit.");
+        $lastCommitDate = $this->getLastCommitDate();
+        $this->logger->info("Last repository commit date is $lastCommitDate.");
 
-        if ($lastChangelog == $lastCommit) {
-            $this->logger->info('Changes appear up to date.');
+        if ($lastChangelogDate === $lastCommitDate) {
+            $this->logger->info('CHANGELOG appears up to date.');
             return;
         }
 
-        $this->logger->error('Changes appear out of date.');
-        $this->logger->error('Log of possible missing changes:');
-        $this->logSinceDate($lastChangelog);
-        throw new Exception('Please update and commit the changes.');
+        $this->logger->error('CHANGELOG appears out of date.');
+        $this->logger->error('Log of possible missing CHANGELOG items:');
+        $this->logSinceDate($lastChangelogDate);
+        throw new Exception('Please update and commit the CHANGELOG.');
+    }
+
+    public function checkChangelogVersion(string $version) : void
+    {
+        $file = $this->checkSkeletonFile('CHANGELOG');
+        $changelog = $this->fsio->get($file);
+
+        $quotedVersion = preg_quote($version);
+        $found = preg_match('/^\W*{$quotedVersion}[\s\t\r\n]/Umsi', $changelog, $matches);
+
+        if ($found) {
+            $this->logger->info("CHANGELOG contains {$version} heading: {$matches[0]}");
+            return;
+        }
+
+        $this->logger->error("CHANGELOG appears to have no {$version} heading.");
+        throw new Exception("Please add a {$version} heading to the CHANGELOG.");
     }
 
     abstract public function getBranch() : string;
 
     abstract public function checkStatus() : void;
 
-    abstract public function getChangesDate() : string;
+    abstract public function getChangelogDate() : string;
 
     abstract public function getLastCommitDate() : string;
 

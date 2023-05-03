@@ -32,7 +32,7 @@ class FakeRepo extends Repo
     {
     }
 
-    public function getChangesDate() : string
+    public function getChangelogDate() : string
     {
         return 'FAKE';
     }

@@ -54,7 +54,7 @@ class Hg extends Repo
         }
     }
 
-    public function getChangesDate() : string
+    public function getChangelogDate() : string
     {
         $changes = $this->checkSkeletonFile('CHANGELOG');
         $this->shell("hg log --limit 1 {$changes}", $output, $return);

@@ -13,10 +13,6 @@ use Producer\Exception;
 #[Option('release', help: "Release the package after validation.")]
 class Validate extends Command
 {
-    protected string $package;
-
-    protected string $version;
-
     public function __invoke(
         Options $options,
 
@@ -29,40 +25,40 @@ class Validate extends Command
             $this->logger->warning("THIS WILL RELEASE THE PACKAGE.");
         }
 
-        $this->setVersion($version);
+        $this->assertValidVersion($version);
 
         $this->repo->sync();
         $this->repo->validateComposer();
 
-        $this->package = $this->repo->getPackage();
-        $this->logger->info("Validating {$this->package} {$this->version}");
+        $package = $this->repo->getPackage();
+        $this->logger->info("Validating {$package} {$version}");
 
         $this->repo->checkSkeletonFiles();
         $this->repo->checkLicenseYear();
         $this->repo->checkQuality();
         $this->repo->checkStatus();
-        $this->repo->checkChanges();
+        $this->repo->checkChangelogDate();
+        $this->repo->checkChangelogVersion($version);
         $this->checkIssues();
 
-        $this->logger->info("{$this->package} {$this->version} appears valid for release!");
+        $this->logger->info("{$package} {$version} appears valid for release!");
 
         if ($options['release']) {
-            $this->logger->info("Releasing $this->package $this->version");
-            $this->api->release($this->repo, $this->version);
-            $this->logger->info("Released $this->package $this->version !");
+            $this->logger->info("Releasing $package $version");
+            $this->api->release($this->repo, $version);
+            $this->logger->info("Released $package $version !");
         }
 
         return 0;
     }
 
-    protected function setVersion(string $version) : void
+    protected function assertValidVersion(string $version) : void
     {
         if (! $version) {
             throw new Exception('Please specify a version number.');
         }
 
         if ($this->isValidVersion($version)) {
-            $this->version = $version;
             return;
         }
 
