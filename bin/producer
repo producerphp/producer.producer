@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Producer;
 
 use AutoShell\Console;
+use Throwable;
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -38,6 +39,12 @@ $container = new ProducerContainer(
     STDERR
 );
 
-$console = $container->get(Console::class);
-$code = $console($_SERVER['argv']);
+try {
+    $console = $container->get(Console::class);
+    $code = $console($_SERVER['argv']);
+} catch (Throwable $e) {
+    echo $e->getMessage() . PHP_EOL;
+    $code = $e->getCode() ?: 1;
+}
+
 exit($code);
