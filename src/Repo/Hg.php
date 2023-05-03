@@ -56,7 +56,7 @@ class Hg extends Repo
 
     public function getChangesDate() : string
     {
-        $changes = $this->checkSupportFile('CHANGELOG');
+        $changes = $this->checkSkeletonFile('CHANGELOG');
         $this->shell("hg log --limit 1 {$changes}", $output, $return);
         return $this->findDate($output);
     }

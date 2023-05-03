@@ -37,7 +37,7 @@ class Validate extends Command
         $this->package = $this->repo->getPackage();
         $this->logger->info("Validating {$this->package} {$this->version}");
 
-        $this->repo->checkSupportFiles();
+        $this->repo->checkSkeletonFiles();
         $this->repo->checkLicenseYear();
         $this->repo->checkQuality();
         $this->repo->checkStatus();

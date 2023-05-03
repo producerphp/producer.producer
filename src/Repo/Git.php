@@ -59,7 +59,7 @@ class Git extends Repo
 
     public function getChangesDate() : string
     {
-        $changes = $this->checkSupportFile('CHANGELOG');
+        $changes = $this->checkSkeletonFile('CHANGELOG');
         $this->shell("git log -1 {$changes}", $output, $return);
         return $this->findDate($output);
     }

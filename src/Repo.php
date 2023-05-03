@@ -9,11 +9,9 @@ use stdClass;
 
 abstract class Repo
 {
-    protected const PDS_SKELETON_FILES = [
+    protected const SKELETON_FILES = [
         'CHANGELOG',
-        'CONTRIBUTING',
         'LICENSE',
-        'README',
     ];
 
     protected string $origin;
@@ -81,14 +79,14 @@ abstract class Repo
         return $this->composer;
     }
 
-    public function checkSupportFiles() : void
+    public function checkSkeletonFiles() : void
     {
-        foreach (static::PDS_SKELETON_FILES as $name) {
-            $this->checkSupportFile($name);
+        foreach (static::SKELETON_FILES as $name) {
+            $this->checkSkeletonFile($name);
         }
     }
 
-    protected function checkSupportFile(string $file) : string
+    protected function checkSkeletonFile(string $file) : string
     {
         $files = array_merge(
             $this->fsio->glob($file, GLOB_MARK),
@@ -112,7 +110,7 @@ abstract class Repo
 
     public function checkLicenseYear() : void
     {
-        $license = $this->fsio->get($this->checkSupportFile('LICENSE'));
+        $license = $this->fsio->get($this->checkSkeletonFile('LICENSE'));
         $year = date('Y');
 
         if (strpos($license, $year) === false) {
@@ -134,7 +132,7 @@ abstract class Repo
 
     public function getChanges() : string
     {
-        $file = $this->checkSupportFile('CHANGELOG');
+        $file = $this->checkSkeletonFile('CHANGELOG');
         $text = $this->fsio->get($file);
 
         preg_match('/(\n\#\# .*\n)(.*)(\n\#\# )/Ums', $text, $matches);
@@ -148,7 +146,7 @@ abstract class Repo
 
     public function checkChanges() : void
     {
-        $file = $this->checkSupportFile('CHANGELOG');
+        $file = $this->checkSkeletonFile('CHANGELOG');
 
         $lastChangelog = $this->getChangesDate();
         $this->logger->info("Last changes date is $lastChangelog.");
