@@ -88,7 +88,7 @@ class Git extends Repo
     public function logSinceDate(string $date) : array
     {
         $date = escapeshellarg($date);
-        $execResult = $this->exec->logged("git log --name-only --since={$date} --reverse");
+        $execResult = $this->exec->result("git log --name-only --since={$date} --reverse");
         return $execResult->lines;
     }
 
@@ -101,5 +101,31 @@ class Git extends Repo
         if ($execResult->isError()) {
             throw $execResult->asException();
         }
+    }
+
+    public function getVersions() : array
+    {
+        $execResult = $this->exec->result('git tag --list');
+        $versions = $execResult->lines;
+        usort($versions, 'version_compare');
+        return $versions;
+    }
+
+    public function getVersionDate(string $version) : string
+    {
+        $execResult = $this->exec->result("git show {$version}");
+
+        $dateToTimestamp = function (array $lines) : int {
+            foreach ($lines as $line) {
+                if (substr($line, 0, 5) == 'Date:') {
+                    $date = trim(substr($line, 5));
+                    return strtotime($date);
+                }
+            }
+
+            throw new Exception('No date found in log.');
+        };
+
+        return date('r', $dateToTimestamp($execResult->lines) + 1);
     }
 }

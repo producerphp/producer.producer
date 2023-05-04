@@ -23,7 +23,7 @@ class Validate
         Options $options,
 
         #[Help("Validate at this version.")]
-        string $version = ''
+        string $version
 
     ) : int
     {
