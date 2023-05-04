@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Producer\Infra\Repo;
 
 use Producer\Infra\Config;
+use Producer\Infra\Exec;
 use Producer\Infra\Fsio\RepoFsio;
 use Producer\Infra\Repo;
 use Producer\Infra\Stdlog;
@@ -38,8 +39,9 @@ class RepoTest extends \PHPUnit\Framework\TestCase
         $repofs = $this->mockRepoFsio($this->changelog);
         $logger = new Stdlog(STDOUT, STDERR);
         $config = $this->mockConfig();
+        $exec = new Exec($logger);
 
-        $repo = new FakeRepo($repofs, $logger, $config);
+        $repo = new FakeRepo($repofs, $logger, $config, $exec);
         $actual = $repo->getChanges();
         $expect = trim($this->subset);
         $this->assertSame($expect, $actual);

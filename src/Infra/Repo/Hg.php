@@ -22,37 +22,37 @@ class Hg extends Repo
 
     public function getBranch() : string
     {
-        $exec = $this->exec('hg branch');
+        $execResult = $this->exec->logged('hg branch');
 
-        if ($exec->error) {
-            throw new Exception(implode(PHP_EOL, $exec->output), $exec->error);
+        if ($execResult->isError()) {
+            throw $execResult->asLongException();
         }
 
-        return trim($exec->last);
+        return trim($execResult->lastLine);
     }
 
     public function sync() : void
     {
-        $exec = $this->exec('hg pull -u');
+        $execResult = $this->exec->logged('hg pull -u');
 
-        if ($exec->error) {
+        if ($execResult->isError()) {
             throw new Exception('Pull and update failed.');
         }
 
         // this allows for "no error" (0) and "nothing to push" (1).
         // cf. http://stackoverflow.com/questions/18536926/
-        $exec = $this->exec('hg push --rev .');
+        $execResult = $this->exec->logged('hg push --rev .');
 
-        if ($exec->error > 1) {
+        if ($execResult->exitCode > 1) {
             throw new Exception('Push failed.');
         }
     }
 
     public function checkStatus() : void
     {
-        $exec = $this->exec('hg status');
+        $execResult = $this->exec->logged('hg status');
 
-        if ($exec->error || $exec->output) {
+        if ($execResult->isError() || $execResult->lines) {
             throw new Exception('Status failed.');
         }
     }
@@ -60,14 +60,14 @@ class Hg extends Repo
     public function getChangelogDate() : string
     {
         $file = $this->checkSkeletonFile('CHANGELOG');
-        $exec = $this->exec("hg log --limit 1 {$file}");
-        return $this->findDate($exec->output);
+        $execResult = $this->exec->logged("hg log --limit 1 {$file}");
+        return $this->findDate($execResult->lines);
     }
 
     public function getLastCommitDate() : string
     {
-        $exec = $this->exec("hg log --limit 1");
-        return $this->findDate($exec->output);
+        $execResult = $this->exec->logged("hg log --limit 1");
+        return $this->findDate($execResult->lines);
     }
 
     /**
@@ -90,18 +90,18 @@ class Hg extends Repo
     public function logSinceDate(string $date) : array
     {
         $date = escapeshellarg("{$date} to now");
-        $exec = $this->exec("hg log --rev : --date {$date}");
-        return $exec->output;
+        $execResult = $this->exec->logged("hg log --rev : --date {$date}");
+        return $execResult->lines;
     }
 
     public function tag(string $version, string $message) : void
     {
         $version = escapeshellarg($version);
         $message = escapeshellarg($message);
-        $exec = $this->exec("hg tag {$version} --message={$message}");
+        $execResult = $this->exec->logged("hg tag {$version} --message={$message}");
 
-        if ($exec->error) {
-            throw new Exception($exec->last);
+        if ($execResult->isError()) {
+            throw $execResult->asException();
         }
     }
 }

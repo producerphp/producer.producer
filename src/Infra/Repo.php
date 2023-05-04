@@ -21,7 +21,8 @@ abstract class Repo
     public function __construct(
         protected RepoFsio $repofs,
         protected LoggerInterface $logger,
-        protected Config $config
+        protected Config $config,
+        protected Exec $exec,
     ) {
         $this->setOrigin();
     }
@@ -38,31 +39,12 @@ abstract class Repo
         return $this->getComposer()->name;
     }
 
-    /**
-     * @return object{output:string[], last:string, error:int}
-     */
-    protected function exec(string $command) : object
-    {
-        $this->logger->debug("> $command");
-        $last = exec($command, $output, $error);
-
-        foreach ($output as $line) {
-            $this->logger->debug("< $line");
-        }
-
-        return (object) [
-            'output' => $output,
-            'last' => (string) $last,
-            'error' => $error,
-        ];
-    }
-
     public function checkComposer() : void
     {
-        $exec = $this->exec('composer validate');
+        $execResult = $this->exec->logged('composer validate');
 
-        if ($exec->error) {
-            throw new Exception($exec->last);
+        if ($execResult->isError()) {
+            throw $execResult->asException();
         }
     }
 
@@ -118,10 +100,10 @@ abstract class Repo
             throw new Exception('The quality_command configuration value is empty.');
         }
 
-        $exec = $this->exec($command);
+        $execResult = $this->exec->logged($command);
 
-        if ($exec->error) {
-            throw new Exception($exec->last);
+        if ($execResult->isError()) {
+            throw $execResult->asException();
         }
     }
 
