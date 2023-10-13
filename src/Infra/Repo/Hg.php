@@ -104,4 +104,34 @@ class Hg extends Repo
             throw $execResult->asException();
         }
     }
+
+    /**
+     * @return array<int, string>
+     */
+    public function getVersions() : array
+    {
+        $execResult = $this->exec->result('hg tags -q');
+        $versions = $execResult->lines;
+        usort(
+            $versions,
+            fn ($a, $b) => version_compare($a, $b),
+        );
+        return $versions;
+    }
+
+    public function getVersionDate(string $version) : string
+    {
+        $execResult = $this->exec->result("hg log --rev {$version}");
+        $dateToTimestamp = function (array $lines) : int {
+            foreach ($lines as $line) {
+                if (substr($line, 0, 5) == 'date:') {
+                    $date = trim(substr($line, 5));
+                    return (int) strtotime($date);
+                }
+            }
+
+            throw new Exception('No date found in log.');
+        };
+        return date('r', $dateToTimestamp($execResult->lines) + 1);
+    }
 }

@@ -49,4 +49,14 @@ class FakeRepo extends Repo
     {
         return ['FAKE'];
     }
+
+    public function getVersions() : array
+    {
+        return ['0.0.0'];
+    }
+
+    public function getVersionDate(string $version) : string
+    {
+        return 'FAKE';
+    }
 }

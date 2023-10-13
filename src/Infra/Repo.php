@@ -176,4 +176,11 @@ abstract class Repo
     abstract public function tag(string $version, string $message) : void;
 
     abstract public function sync() : void;
+
+    /**
+     * @return array<int, string>
+     */
+    abstract public function getVersions() : array;
+
+    abstract public function getVersionDate(string $version) : string;
 }
