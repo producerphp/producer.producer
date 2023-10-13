@@ -23,14 +23,15 @@
     "require": {
         "php": "^8.1",
         "psr/log": "^2.0",
-        "pmjones/auto-shell": "1.x@dev",
+        "pmjones/auto-shell": "^1.0",
         "pmjones/caplet": "^1.0"
     },
     "require-dev": {
         "pds/composer-script-names": "^1.0",
         "pds/skeleton": "^1.0",
         "phpstan/phpstan": "^1.0",
-        "phpunit/phpunit": "^10.0"
+        "phpunit/phpunit": "^10.0",
+        "pmjones/php-styler": "0.x-dev"
     },
     "autoload": {
         "psr-4": {
@@ -46,8 +47,10 @@
         "bin/producer"
     ],
     "scripts": {
-        "analyze": "./vendor/bin/phpstan analyze -c phpstan.neon",
-        "check": "composer test && composer analyze",
+        "analyze": "./vendor/bin/phpstan",
+        "check": "composer test && composer analyze && composer cs-check",
+        "cs-check": "./vendor/bin/php-styler check",
+        "cs-fix": "./vendor/bin/php-styler apply",
         "test": "./vendor/bin/phpunit",
         "test-coverage": "./vendor/bin/phpunit --coverage-html=./tmp/coverage"
     }
