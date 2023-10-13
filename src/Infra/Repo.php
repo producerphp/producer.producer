@@ -144,9 +144,8 @@ abstract class Repo
     {
         $file = $this->checkSkeletonFile('CHANGELOG');
         $changelog = $this->repofs->get($file);
-        $quotedVersion = preg_quote($version);
         $found = preg_match(
-            "/^\W*{$quotedVersion}[\s\t\r\n]/Umsi",
+            '/^\W*' . preg_quote($version) . '[\s\t\r\n]/Umsi',
             $changelog,
             $matches,
         );
