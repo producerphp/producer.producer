@@ -10,10 +10,8 @@ use Psr\Log\LoggerInterface;
 
 class LogService
 {
-    public function __construct(
-        protected Repo $repo,
-        protected LoggerInterface $logger,
-    ) {
+    public function __construct(protected Repo $repo, protected LoggerInterface $logger)
+    {
     }
 
     public function __invoke()
@@ -21,10 +19,9 @@ class LogService
         $versions = $this->repo->getVersions();
         $latestVersion = end($versions);
         $latestVersionDate = $this->repo->getVersionDate($latestVersion);
-
-        $this->logger->info("Latest release was {$latestVersion} on {$latestVersionDate}.");
+        $this->logger
+            ->info("Latest release was {$latestVersion} on {$latestVersionDate}.");
         $this->logger->info("");
-
         $lines = $this->repo->logSinceDate($latestVersionDate);
 
         foreach ($lines as $line) {
@@ -43,7 +40,6 @@ class LogService
     public function getVersionDate(string $version) : string
     {
         $execResult = $this->exec->result("git show {$version}");
-
         $dateToTimestamp = function ($output) {
             foreach ($output as $line) {
                 if (substr($line, 0, 5) == 'Date:') {
@@ -54,14 +50,14 @@ class LogService
 
             throw new Exception('No date found in log.');
         };
-
         return date('r', $dateToTimestamp($execResult->lines) + 1);
     }
 
     public function logSince(string $date) : array
     {
         $date = escapeshellarg($date);
-        $execResult = $this->exec->result("git log --name-status --reverse --after={$date}");
+        $execResult = $this->exec
+            ->result("git log --name-status --reverse --after={$date}");
         return $execResult->lines;
     }
 }

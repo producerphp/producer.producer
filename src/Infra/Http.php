@@ -19,10 +19,11 @@ class Http
         string $method,
         string $path,
         array $query = [],
-        array $data = []
+        array $data = [],
     ) : stdClass
     {
         $url = $this->base . $path;
+
         if ($query) {
             $url .= '?' . http_build_query($query);
         }
@@ -56,11 +57,14 @@ class Http
     {
         $http = [
             'method' => $method,
-            'header' => implode("\r\n", [
-                'User-Agent: php/stream',
-                'Accept: application/json',
-                'Content-Type: application/json',
-            ]),
+            'header' => implode(
+                "\r\n",
+                [
+                    'User-Agent: php/stream',
+                    'Accept: application/json',
+                    'Content-Type: application/json',
+                ],
+            ),
         ];
 
         if ($data) {

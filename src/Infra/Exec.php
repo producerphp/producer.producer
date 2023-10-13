@@ -7,21 +7,20 @@ use Psr\Log\LoggerInterface;
 
 class Exec
 {
-    public function __construct(
-        protected LoggerInterface $logger,
-    ) {
+    public function __construct(protected LoggerInterface $logger)
+    {
     }
 
     public function logged(string $command) : ExecResult
     {
-    	$this->logger->debug("> {$command}");
-    	$execResult = $this->result($command);
+        $this->logger->debug("> {$command}");
+        $execResult = $this->result($command);
 
-    	foreach ($execResult->lines as $line) {
-    		$this->logger->debug("< {$line}");
-    	}
+        foreach ($execResult->lines as $line) {
+            $this->logger->debug("< {$line}");
+        }
 
-    	return $execResult;
+        return $execResult;
     }
 
     public function result(string $command) : ExecResult
@@ -29,13 +28,9 @@ class Exec
         $lastLine = exec($command, $lines, $exitCode);
 
         if ($lastLine === false) {
-            throw new Exception("Command failed: $command");
+            throw new Exception("Command failed: {$command}");
         }
 
-        return new ExecResult(
-        	$lines,
-        	$lastLine,
-        	$exitCode
-        );
+        return new ExecResult($lines, $lastLine, $exitCode);
     }
 }

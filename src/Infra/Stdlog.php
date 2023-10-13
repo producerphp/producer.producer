@@ -27,10 +27,8 @@ class Stdlog extends AbstractLogger
      * @param resource $stdout
      * @param resource $stderr
      */
-    public function __construct(
-        protected mixed $stdout,
-        protected mixed $stderr
-    ) {
+    public function __construct(protected mixed $stdout, protected mixed $stderr)
+    {
     }
 
     /**
@@ -39,7 +37,7 @@ class Stdlog extends AbstractLogger
     public function log(
         mixed $level,
         string|Stringable $message,
-        array $context = []
+        array $context = [],
     ) : void
     {
         $replace = [];
@@ -49,7 +47,6 @@ class Stdlog extends AbstractLogger
         }
 
         $message = strtr((string) $message, $replace) . PHP_EOL;
-
         $handle = $this->stdout;
 
         if (in_array($level, $this->stderrLevels)) {

@@ -37,14 +37,8 @@ class Gitlab extends Api
     public function issues() : array
     {
         $issues = [];
-
         $repoName = urlencode($this->repoName);
-        $yield = $this->httpGet(
-            "/projects/{$repoName}/issues",
-            [
-                'sort' => 'asc',
-            ]
-        );
+        $yield = $this->httpGet("/projects/{$repoName}/issues", ['sort' => 'asc']);
 
         /** @var object{iid:numeric-string, title:string} $issue */
         foreach ($yield as $issue) {
@@ -61,25 +55,23 @@ class Gitlab extends Api
     public function release(Repo $repo, LoggerInterface $logger, string $version) : void
     {
         $logger->info("Releasing {$version} remotely.");
-
         $query = [];
-
         $data = [
             'id' => $this->repoName,
             'tag_name' => $version,
             'ref' => $repo->getBranch(),
-            'release_description' => $repo->getChanges()
+            'release_description' => $repo->getChanges(),
         ];
-
         $repoName = urlencode($this->repoName);
         $response = $this->httpPost(
             "/projects/{$repoName}/repository/tags",
             $query,
-            $data
+            $data,
         );
 
         if (! isset($response->name)) {
             $message = var_export((array) $response, true);
+
             throw new Exception($message);
         }
 

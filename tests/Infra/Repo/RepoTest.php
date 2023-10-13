@@ -14,18 +14,16 @@ class RepoTest extends \PHPUnit\Framework\TestCase
     protected function mockRepoFsio(string $text) : RepoFsio
     {
         $repofs = $this->createMock(RepoFsio::class);
-
-        $repofs->expects($this->any())
+        $repofs
+            ->expects($this->any())
             ->method('glob')
-            ->will($this->returnValueMap([
-                ['CHANGELOG', GLOB_MARK, []],
-                ['CHANGELOG.*', GLOB_MARK, ['CHANGELOG.md']]
-            ]));
-
-        $repofs->expects($this->any())
-            ->method('get')
-            ->will($this->returnValue($text));
-
+            ->will(
+                $this->returnValueMap([
+                    ['CHANGELOG', GLOB_MARK, []],
+                    ['CHANGELOG.*', GLOB_MARK, ['CHANGELOG.md']],
+                ]),
+            );
+        $repofs->expects($this->any())->method('get')->will($this->returnValue($text));
         return $repofs;
     }
 
@@ -40,7 +38,6 @@ class RepoTest extends \PHPUnit\Framework\TestCase
         $logger = new Stdlog(STDOUT, STDERR);
         $config = $this->mockConfig();
         $exec = new Exec($logger);
-
         $repo = new FakeRepo($repofs, $logger, $config, $exec);
         $actual = $repo->getChanges();
         $expect = trim($this->subset);

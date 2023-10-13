@@ -14,7 +14,6 @@ class ExecResult
         public array $lines,
         public string $lastLine,
         public int $exitCode,
-
     ) {
     }
 
@@ -30,9 +29,6 @@ class ExecResult
 
     public function asLongException() : Exception
     {
-        return new Exception(
-            implode(PHP_EOL, $this->lines),
-            $this->exitCode
-        );
+        return new Exception(implode(PHP_EOL, $this->lines), $this->exitCode);
     }
 }

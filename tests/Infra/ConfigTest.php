@@ -14,13 +14,14 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     protected function mockHomeFsio(array $returnData, bool $isFile = true) : HomeFsio
     {
         $homefs = $this->createMock(HomeFsio::class);
-
-        $homefs->expects($this->any())
-            ->method('isFile')->will($this->returnValue($isFile));
-
-        $homefs->expects($this->any())
-            ->method('parseIni')->will($this->returnValue($returnData));
-
+        $homefs
+            ->expects($this->any())
+            ->method('isFile')
+            ->will($this->returnValue($isFile));
+        $homefs
+            ->expects($this->any())
+            ->method('parseIni')
+            ->will($this->returnValue($returnData));
         return $homefs;
     }
 
@@ -30,26 +31,22 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     protected function mockRepoFsio(array $returnData, bool $isFile = true) : RepoFsio
     {
         $repofs = $this->createMock(RepoFsio::class);
-
-        $repofs->expects($this->any())
-            ->method('isFile')->will($this->returnValue($isFile));
-
-        $repofs->expects($this->any())
-            ->method('parseIni')->will($this->returnValue($returnData));
-
+        $repofs
+            ->expects($this->any())
+            ->method('isFile')
+            ->will($this->returnValue($isFile));
+        $repofs
+            ->expects($this->any())
+            ->method('parseIni')
+            ->will($this->returnValue($returnData));
         return $repofs;
     }
 
     public function testLoadHomeConfig() : void
     {
-        $homefs = $this->mockHomeFsio([
-            'gitlab_token' => 'foobarbazdibzimgir',
-        ]);
-
+        $homefs = $this->mockHomeFsio(['gitlab_token' => 'foobarbazdibzimgir']);
         $repofs = $this->mockRepoFsio([], false);
-
         $config = new Config($homefs, $repofs);
-
         $expect = [
             'bitbucket_hostname' => 'api.bitbucket.org',
             'bitbucket_username' => null,
@@ -61,9 +58,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             'gitlab_token' => 'foobarbazdibzimgir',
             'quality_command' => null,
         ];
-
         $actual = $config->getAll();
-
         $this->assertSame($expect, $actual);
     }
 
@@ -74,11 +69,8 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             'github_username' => 'foo',
             'github_token' => 'bar',
         ]);
-
         $repofs = $this->mockRepoFsio([], false);
-
         $config = new Config($homefs, $repofs);
-
         $expect = [
             'bitbucket_hostname' => 'api.bitbucket.org',
             'bitbucket_username' => null,
@@ -90,9 +82,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             'gitlab_token' => null,
             'quality_command' => null,
         ];
-
         $actual = $config->getAll();
-
         $this->assertSame($expect, $actual);
     }
 
@@ -102,11 +92,8 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             'gitlab_hostname' => 'example.org',
             'gitlab_token' => 'bar',
         ]);
-
         $repofs = $this->mockRepoFsio([], false);
-
         $config = new Config($homefs, $repofs);
-
         $expect = [
             'bitbucket_hostname' => 'api.bitbucket.org',
             'bitbucket_username' => null,
@@ -118,20 +105,15 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             'gitlab_token' => 'bar',
             'quality_command' => null,
         ];
-
         $actual = $config->getAll();
-
         $this->assertSame($expect, $actual);
     }
 
     public function testLoadHomeAndRepoConfig() : void
     {
         $homefs = $this->mockHomeFsio(['gitlab_token' => 'foobarbazdibzimgir']);
-
         $repofs = $this->mockRepoFsio([]);
-
         $config = new Config($homefs, $repofs);
-
         $expect = [
             'bitbucket_hostname' => 'api.bitbucket.org',
             'bitbucket_username' => null,
@@ -143,9 +125,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             'gitlab_token' => 'foobarbazdibzimgir',
             'quality_command' => null,
         ];
-
         $actual = $config->getAll();
-
         $this->assertSame($expect, $actual);
     }
 }

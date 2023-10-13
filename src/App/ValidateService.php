@@ -27,19 +27,14 @@ class ValidateService
 
         $this->repo->checkComposer();
         $package = $this->repo->getPackage();
-
         $this->logger->info("Validating {$package} {$version}");
-
         $this->repo->sync();
         $this->repo->checkStatus();
-
         $this->repo->checkQuality();
         $this->repo->checkStatus();
-
         $this->repo->checkLicenseYear();
         $this->repo->checkChangelogDate();
         $this->repo->checkChangelogVersion($version);
-
         $this->logger->info("{$package} {$version} appears valid!");
 
         if ($release) {
@@ -67,7 +62,7 @@ class ValidateService
     protected function isValidVersion(string $version) : bool
     {
         $format = '^(v?\d+.\d+.\d+)(-(dev|alpha|beta|RC|p)\d*)?$';
-        preg_match("/$format/", $version, $matches);
+        preg_match("/{$format}/", $version, $matches);
         return (bool) $matches;
     }
 }

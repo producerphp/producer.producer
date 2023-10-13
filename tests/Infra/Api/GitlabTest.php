@@ -10,14 +10,13 @@ class GitlabTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider remoteProvider
      */
-    public function testRepoNameCanBeDerivedFromRemote(string $remote, string $hostname, string $repoName) : void
+    public function testRepoNameCanBeDerivedFromRemote(
+        string $remote,
+        string $hostname,
+        string $repoName,
+    ) : void
     {
-        $api = new Gitlab(
-            $remote,
-            $hostname,
-            'token'
-        );
-
+        $api = new Gitlab($remote, $hostname, 'token');
         $this->assertEquals($repoName, $api->getRepoName());
     }
 
@@ -25,7 +24,7 @@ class GitlabTest extends \PHPUnit\Framework\TestCase
      * @return array<string[]>
      */
     public static function remoteProvider() : array
-    {   
+    {
         return [
             ['git@gitlab.com:user/repo.git', 'gitlab.com', 'user/repo'],
             ['http://gitlab.com/user/repo.git', 'gitlab.com', 'user/repo'],

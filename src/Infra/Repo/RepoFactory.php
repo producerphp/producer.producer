@@ -24,7 +24,7 @@ class RepoFactory
     {
         if ($this->repofs->isDir('.git')) {
             return new Git($this->repofs, $this->logger, $this->config, $this->exec);
-        };
+        }
 
         if ($this->repofs->isDir('.hg')) {
             return new Hg($this->repofs, $this->logger, $this->config, $this->exec);

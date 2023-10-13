@@ -11,12 +11,11 @@ class ProducerContainerTest extends \PHPUnit\Framework\TestCase
             $_SERVER['HOME'],
             dirname(__DIR__),
             STDOUT,
-            STDERR
+            STDERR,
         );
-
         $this->assertInstanceOf(
             Sapi\Cli\Command\Validate::class,
-            $container->new(Sapi\Cli\Command\Validate::class)
+            $container->new(Sapi\Cli\Command\Validate::class),
         );
     }
 }

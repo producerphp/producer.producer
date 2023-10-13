@@ -10,15 +10,13 @@ class GitHubTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider remoteProvider
      */
-    public function testRepoNameCanBeDerivedFromRemote(string $remote, string $hostname, string $repoName) : void
+    public function testRepoNameCanBeDerivedFromRemote(
+        string $remote,
+        string $hostname,
+        string $repoName,
+    ) : void
     {
-        $api = new Github(
-            $remote,
-            $hostname,
-            'username',
-            'token'
-        );
-
+        $api = new Github($remote, $hostname, 'username', 'token');
         $this->assertEquals($repoName, $api->getRepoName());
     }
 
@@ -26,7 +24,7 @@ class GitHubTest extends \PHPUnit\Framework\TestCase
      * @return array<string[]>
      */
     public static function remoteProvider() : array
-    {   
+    {
         return [
             ['git@github.com:user/repo.git', 'api.github.com', 'user/repo'],
             ['http://github.com/user/repo.git', 'api.github.com', 'user/repo'],

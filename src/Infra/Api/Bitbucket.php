@@ -11,8 +11,12 @@ use stdClass;
 
 class Bitbucket extends Api
 {
-    public function __construct(string $origin, string $hostname, string $user, string $pass)
-    {
+    public function __construct(
+        string $origin,
+        string $hostname,
+        string $user,
+        string $pass,
+    ) {
         $this->setHttp("https://{$user}:{$pass}@{$hostname}/2.0");
         $this->setRepoNameFromOrigin($origin);
     }
@@ -35,12 +39,9 @@ class Bitbucket extends Api
     public function issues() : array
     {
         $issues = [];
-
         $yield = $this->httpGet(
             "/repositories/{$this->repoName}/issues",
-            [
-                'sort' => 'created_on'
-            ]
+            ['sort' => 'created_on'],
         );
 
         /** @var object{title: string, id: numeric-string} $issue */

@@ -9,10 +9,7 @@ use stdClass;
 
 abstract class Repo
 {
-    protected const SKELETON_FILES = [
-        'CHANGELOG',
-        'LICENSE',
-    ];
+    protected const SKELETON_FILES = ['CHANGELOG', 'LICENSE'];
 
     protected string $origin;
 
@@ -61,7 +58,7 @@ abstract class Repo
     {
         $files = array_merge(
             $this->repofs->glob($file, GLOB_MARK),
-            $this->repofs->glob("{$file}.*", GLOB_MARK)
+            $this->repofs->glob("{$file}.*", GLOB_MARK),
         );
 
         if (count($files) < 1) {
@@ -88,7 +85,10 @@ abstract class Repo
         $year = date('Y');
 
         if (strpos($license, $year) === false) {
-            $this->logger->warning('The LICENSE copyright year (or range of years) looks out-of-date.');
+            $this->logger
+                ->warning(
+                    'The LICENSE copyright year (or range of years) looks out-of-date.',
+                );
         }
     }
 
@@ -111,7 +111,6 @@ abstract class Repo
     {
         $file = $this->checkSkeletonFile('CHANGELOG');
         $text = $this->repofs->get($file);
-
         preg_match('/(\n\#\# .*\n)(.*)(\n\#\# )/Ums', $text, $matches);
 
         if (isset($matches[2])) {
@@ -124,12 +123,10 @@ abstract class Repo
     public function checkChangelogDate() : void
     {
         $file = $this->checkSkeletonFile('CHANGELOG');
-
         $lastChangelogDate = $this->getChangelogDate();
-        $this->logger->info("Last CHANGELOG date is $lastChangelogDate.");
-
+        $this->logger->info("Last CHANGELOG date is {$lastChangelogDate}.");
         $lastCommitDate = $this->getLastCommitDate();
-        $this->logger->info("Last repository commit date is $lastCommitDate.");
+        $this->logger->info("Last repository commit date is {$lastCommitDate}.");
 
         if ($lastChangelogDate === $lastCommitDate) {
             $this->logger->info('CHANGELOG appears up to date.');
@@ -139,6 +136,7 @@ abstract class Repo
         $this->logger->error('CHANGELOG appears out of date.');
         $this->logger->error('Log of possible missing CHANGELOG items:');
         $this->logSinceDate($lastChangelogDate);
+
         throw new Exception('Please update and commit the CHANGELOG.');
     }
 
@@ -146,9 +144,12 @@ abstract class Repo
     {
         $file = $this->checkSkeletonFile('CHANGELOG');
         $changelog = $this->repofs->get($file);
-
         $quotedVersion = preg_quote($version);
-        $found = preg_match('/^\W*{$quotedVersion}[\s\t\r\n]/Umsi', $changelog, $matches);
+        $found = preg_match(
+            "/^\W*{$quotedVersion}[\s\t\r\n]/Umsi",
+            $changelog,
+            $matches,
+        );
 
         if ($found) {
             $this->logger->info("CHANGELOG contains {$version} heading: {$matches[0]}");
@@ -156,6 +157,7 @@ abstract class Repo
         }
 
         $this->logger->error("CHANGELOG appears to have no {$version} heading.");
+
         throw new Exception("Please add a {$version} heading to the CHANGELOG.");
     }
 

@@ -14,20 +14,17 @@ class ApiFactoryTest extends \PHPUnit\Framework\TestCase
     public function testThatItReturnsAppropriateApiImplementationForGithub(
         string $host,
         string $origin,
-        string $repoName
+        string $repoName,
     ) : void
     {
         $repo = $this->mockRepo($origin);
-
         $config = $this->mockConfig([
             'github_hostname' => $host,
             'github_username' => 'producer',
             'github_token' => 'token',
         ]);
-
         $apiFactory = new ApiFactory($repo, $config);
         $api = $apiFactory->new();
-
         $this->assertInstanceOf(Github::class, $api);
         $this->assertEquals($repoName, $api->getRepoName());
     }
@@ -38,8 +35,16 @@ class ApiFactoryTest extends \PHPUnit\Framework\TestCase
     public static function githubProvider()
     {
         return [
-            ['github.enterprise.com', 'git@github.enterprise.com:producer/producer.git', 'producer/producer'],
-            ['api.github.com', 'git@github.com:producer/producer.git', 'producer/producer'],
+            [
+                'github.enterprise.com',
+                'git@github.enterprise.com:producer/producer.git',
+                'producer/producer',
+            ],
+            [
+                'api.github.com',
+                'git@github.com:producer/producer.git',
+                'producer/producer',
+            ],
         ];
     }
 
@@ -55,21 +60,20 @@ class ApiFactoryTest extends \PHPUnit\Framework\TestCase
             $valueMap[] = [$arg, $return];
         }
 
-        $config->expects($this->any())
+        $config
+            ->expects($this->any())
             ->method('get')
             ->will($this->returnValueMap($valueMap));
-
         return $config;
     }
 
     protected function mockRepo(string $origin) : Git
     {
         $repo = $this->createMock(Git::class);
-
-        $repo->expects($this->any())
+        $repo
+            ->expects($this->any())
             ->method('getOrigin')
             ->will($this->returnValue($origin));
-
         return $repo;
     }
 }

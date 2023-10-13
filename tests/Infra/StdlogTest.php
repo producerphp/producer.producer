@@ -62,6 +62,7 @@ class StdlogTest extends \PHPUnit\Framework\TestCase
     {
         rewind($handle);
         $actual = '';
+
         while ($read = fread($handle, 8192)) {
             $actual .= $read;
         }

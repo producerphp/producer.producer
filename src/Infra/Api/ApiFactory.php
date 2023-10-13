@@ -11,10 +11,8 @@ use Producer\Infra\Repo;
 
 class ApiFactory
 {
-    public function __construct(
-        protected Repo $repo,
-        protected Config $config
-    ) {
+    public function __construct(protected Repo $repo, protected Config $config)
+    {
     }
 
     public function new() : Api
@@ -26,7 +24,7 @@ class ApiFactory
                 $origin,
                 (string) $this->config->get('github_hostname'),
                 (string) $this->config->get('github_username'),
-                (string) $this->config->get('github_token')
+                (string) $this->config->get('github_token'),
             );
         }
 
@@ -34,7 +32,7 @@ class ApiFactory
             return new Gitlab(
                 $origin,
                 (string) $this->config->get('gitlab_hostname'),
-                (string) $this->config->get('gitlab_token')
+                (string) $this->config->get('gitlab_token'),
             );
         }
 
@@ -43,7 +41,7 @@ class ApiFactory
                 $origin,
                 (string) $this->config->get('bitbucket_hostname'),
                 (string) $this->config->get('bitbucket_username'),
-                (string) $this->config->get('bitbucket_password')
+                (string) $this->config->get('bitbucket_password'),
             );
         }
 
@@ -56,7 +54,10 @@ class ApiFactory
             return strpos($origin, 'github.com') !== false;
         }
 
-        return strpos($origin, (string) $this->config->get('github_hostname')) !== false;
+        return strpos(
+            $origin,
+            (string) $this->config->get('github_hostname'),
+        ) !== false;
     }
 
     protected function isGitlabBased(string $origin) : bool
@@ -65,7 +66,10 @@ class ApiFactory
             return strpos($origin, 'gitlab.com') !== false;
         }
 
-        return strpos($origin, (string) $this->config->get('gitlab_hostname')) !== false;
+        return strpos(
+            $origin,
+            (string) $this->config->get('gitlab_hostname'),
+        ) !== false;
     }
 
     protected function isBitbucketBased(string $origin) : bool
@@ -74,6 +78,9 @@ class ApiFactory
             return strpos($origin, 'bitbucket.org') !== false;
         }
 
-        return strpos($origin, (string) $this->config->get('bitbucket_hostname')) !== false;
+        return strpos(
+            $origin,
+            (string) $this->config->get('bitbucket_hostname'),
+        ) !== false;
     }
 }

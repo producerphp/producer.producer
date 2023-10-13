@@ -41,6 +41,7 @@ class Config
     {
         if (! $homefs->isFile($this->configFile)) {
             $path = $homefs->path($this->configFile);
+
             throw new Exception("Config file {$path} not found.");
         }
 
@@ -65,7 +66,7 @@ class Config
 
     public function has(string $key) : bool
     {
-        return (isset($this->data[$key]));
+        return isset($this->data[$key]);
     }
 
     /**

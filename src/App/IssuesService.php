@@ -9,16 +9,13 @@ use Psr\Log\LoggerInterface;
 
 class IssuesService
 {
-    public function __construct(
-        protected Api $api,
-        protected LoggerInterface $logger,
-    ) {
+    public function __construct(protected Api $api, protected LoggerInterface $logger)
+    {
     }
 
     public function __invoke() : void
     {
         $issues = $this->api->issues();
-
         $this->logger->info($this->api->getRepoName());
         $this->logger->info('');
 

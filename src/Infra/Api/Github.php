@@ -10,8 +10,12 @@ use Psr\Log\LoggerInterface;
 
 class Github extends Api
 {
-    public function __construct(string $origin, string $hostname, string $user, string $token)
-    {
+    public function __construct(
+        string $origin,
+        string $hostname,
+        string $user,
+        string $token,
+    ) {
         // @see https://developer.github.com/v3/enterprise
         if (strpos($hostname, 'github.com') === false) {
             $hostname .= '/api/v3';
@@ -27,13 +31,9 @@ class Github extends Api
     public function issues() : array
     {
         $issues = [];
-
         $yield = $this->httpGet(
             "/repos/{$this->repoName}/issues",
-            [
-                'sort' => 'created',
-                'direction' => 'asc',
-            ]
+            ['sort' => 'created', 'direction' => 'asc'],
         );
 
         /** @var object{title: string, number: numeric-string, html_url: string} $issue */
@@ -51,14 +51,11 @@ class Github extends Api
     public function release(Repo $repo, LoggerInterface $logger, string $version) : void
     {
         $logger->info("Releasing {$version} remotely.");
-
         $prerelease = substr($version, 0, 2) == '0.'
             || strpos($version, 'dev') !== false
             || strpos($version, 'alpha') !== false
             || strpos($version, 'beta') !== false;
-
         $query = [];
-
         $data = [
             'tag_name' => $version,
             'target_commitish' => $repo->getBranch(),
@@ -67,15 +64,11 @@ class Github extends Api
             'draft' => false,
             'prerelease' => $prerelease,
         ];
-
-        $response = $this->httpPost(
-            "/repos/{$this->repoName}/releases",
-            $query,
-            $data
-        );
+        $response = $this->httpPost("/repos/{$this->repoName}/releases", $query, $data);
 
         if (! isset($response->id)) {
             $message = var_export((array) $response, true);
+
             throw new Exception($message);
         }
 
