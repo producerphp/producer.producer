@@ -22,15 +22,20 @@ class ProducerContainer extends Caplet
         protected mixed $stdout = STDOUT,
         protected mixed $stderr = STDERR,
     ) {
+        // config
         parent::__construct([
             HomeFsio::class => ['root' => $homedir],
             RepoFsio::class => ['root' => $repodir],
             Stdlog::class => ['stdout' => $stdout, 'stderr' => $stderr],
         ]);
+
+        // Api
         $this->factory(
             Api::class,
             fn (Caplet $caplet) : Api => $caplet->get(ApiFactory::class)->new(),
         );
+
+        // Console
         $this->factory(
             Console::class,
             fn (Caplet $caplet) : Console
@@ -43,10 +48,14 @@ class ProducerContainer extends Caplet
                         . PHP_EOL,
                 ),
         );
+
+        // LoggerInterface
         $this->factory(
             LoggerInterface::class,
             fn (Caplet $caplet) : Stdlog => $caplet->get(Stdlog::class),
         );
+
+        // Repo
         $this->factory(
             Repo::class,
             fn (Caplet $caplet) : Repo => $caplet->get(RepoFactory::class)->new(),
